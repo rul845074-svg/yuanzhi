@@ -21,9 +21,9 @@
 
 产品定位上借用"**观测手札**"的意象而非"仪表盘"：这是一本慢慢长起来的电子手札，不是一个实时监控的 SaaS dashboard。
 
-## 设计哲学（来自[多模块系统设计](../../../汝霖宪法/19_多模块系统设计.md)8 条条款）
+## 设计原则
 
-**① 单一真相源** · 跨模块共享的方法论只有一份正文（`_方法论前缀.md`），修改即全链路生效。
+**① 单一真相源** · 跨模块共享的 prompt 规则只有一份正文（`_方法论前缀.md`），修改即全链路生效。
 
 **② 调度器 ≠ 执行器** · 工作流调度员只"提醒"该跑什么，从不代替用户执行 —— 自省必须是主体行为，不可外包。
 
@@ -35,9 +35,9 @@
 
 **⑥ 规模 ≠ 详情** · 规模快照交给 Python 扫目录（`O(1)` 计数），LLM 只做"有观点的分析"。
 
-**⑦ Prompt 不做格式警察** · LLM 数数不准的事给 Python，严格 JSON schema 会让模型陷入 drift loop（[BC-007 教训](../../../项目2自我成长计划系统/元知/项目产出物/bug记录/BC-007_十日报新增板块drift循环.md)）。
+**⑦ Prompt 不做格式警察** · LLM 数数不准的事给 Python，严格 JSON schema 会让模型陷入 drift loop。
 
-**⑧ 命名与版本治理** · M 代号带中文名、D 号决策 3 行（决策 / 为什么 / 证据）、BC 号 bug 独立成文、废弃决策不删只追加。
+**⑧ 命名与版本治理** · M 代号带中文名、决策条目 3 行（决策 / 为什么 / 证据）、bug 独立成文、废弃决策不删只追加。
 
 ## 架构
 
@@ -88,7 +88,7 @@
 | M6 | 盲区诊断 | 手动 | 跨全量深度扫描 | ⏸ 挂起 |
 | M8 | 下月星象 | 月末 | M3 月报第十节替换 | ✅ |
 | M9 | 工作流调度员 | 被动 | 提醒卡片（不执行）| ✅ |
-| M10 | 方法论前缀 | 共享 | prompt 注入 | ✅ v3 |
+| M10 | 共享 Prompt 前缀 | 跨模块共享 | engine 自动注入 | ✅ v3 |
 | M11 | 正念方法库 | 月末 | 行动建议频率统计 | ⏳ 立项 |
 
 ## 技术亮点
@@ -101,9 +101,9 @@
 
 跑任务后前端对有变化的字段：**瞬时** 3.8 秒浮动朱砂 `+N` 徽章；**持久** localStorage 7 天的 hover tooltip（小红点脉动 + 鼠标悬停显示 `+1 · 2 小时前`）—— 刷新不丢，7 天自动清。
 
-### 方法论前缀自动注入
+### 跨模块 Prompt 前缀自动注入
 
-所有叙事类任务（M1/M2/M3/M4/M5a/M5b/M8）的 prompt 拼接时，engine 自动 `prepend(_方法论前缀.md)`；结构化 JSON 任务（daily_analysis_state）刻意跳过注入避免污染"只输出 JSON"的约束。修改方法论一处改，六模块同步生效。
+所有叙事类任务（M1/M2/M3/M4/M5a/M5b/M8）的 prompt 拼接时，engine 自动 `prepend(_方法论前缀.md)`；结构化 JSON 任务（daily_analysis_state）刻意跳过注入避免污染"只输出 JSON"的约束。修改规则一处改，六模块同步生效。
 
 ### 规模快照自动刷新
 
@@ -123,7 +123,7 @@ macOS 原生 `launchd` 管两个 LaunchAgent：本地 8773 服务（KeepAlive ·
 ├── config/agent.config.json     数据源 profile + 路径配置
 ├── deploy/cloud/api_server.py   云端薄 API（serve + proxy）
 ├── prompts/
-│   ├── _方法论前缀.md            M10 跨模块方法论底座
+│   ├── _方法论前缀.md            M10 跨模块 prompt 规则底座
 │   ├── daily_analysis_report.md M1 日报
 │   ├── daily_analysis_state.md  M1 state（JSON 提取器）
 │   ├── ten_day_summary.md       M2 十日报
@@ -167,7 +167,7 @@ python3 scripts/serve_cognitive_agent_demo.py --profile prod --port 8773
 ### macOS 开机自启（可选）
 
 ```bash
-# 拷贝 LaunchAgent 模板（项目里不带，自己根据 README 架构段的命名写两份 plist）
+# 创建 LaunchAgent plist 配置文件（项目里不带，自己根据上方架构段的命名写两份）
 # 放到 ~/Library/LaunchAgents/
 launchctl load -w ~/Library/LaunchAgents/com.yuanzhi.local-service.plist
 launchctl load -w ~/Library/LaunchAgents/com.yuanzhi.reverse-tunnel.plist
@@ -183,15 +183,6 @@ launchctl list | grep yuanzhi   # 验证
 ./scripts/sync_to_cloud.sh --dist-only  # 只推前端
 ```
 
-## 跨项目方法论沉淀
-
-本项目的多模块协作经验已经提炼成**跨项目通用文档**，在另一个 git repo 中维护：
-
-- `汝霖宪法/19_多模块系统设计.md` —— 抽象规则（8 条条款，本文件"设计哲学"段即这份的精简版）
-- `产品SOP/模板/02_构建期/02_多模块协作设计.md` —— 施工手册（四步+八附）
-
-下次做新的多模块 AI 产品时，这两份文档直接照搬，不需要从零摸索。
-
 ## 发展历程（简略）
 
 | 里程碑 | 完成时 | 关键动作 |
@@ -200,8 +191,7 @@ launchctl list | grep yuanzhi   # 验证
 | M1 每日日报 | 2026-04-22 | M9 调度员 + M10 前缀骨架 + 4 场景干跑验证 |
 | M2 全模块后端闭环 | 2026-04-23 | 十日 / 月汇 / 人生 / 星象 / 五件套 / 月图谱 六模块全通 · BC-007 drift 修复 |
 | 前端 v1 灰度 | 2026-04-23 | A 纸本观测手札单文件 · OPS 操作台 · 双层 delta 动效 |
-| M3 反哺宪法 SOP | 2026-04-24 | 多模块经验提炼成跨项目通用两份文档 |
-| 云端部署 + 运维自动化 | 2026-04-24 | launchd 开机自启 + 隧道断线自动重连 |
+| 云端部署 + 运维自动化 | 2026-04-24 | launchd 开机自启 + 隧道断线自动重连 · 架构定型 |
 
 ## License
 
@@ -211,5 +201,5 @@ launchctl list | grep yuanzhi   # 验证
 
 换句话说：拿走可以，改掉可以，删作者署名不可以。
 
-> 非源码部分（prompts 里的方法论、"观测手札"产品概念、"元知 / YUAN · ZHI" 品牌名）使用上请保持相同的署名原则。如用于商业产品或学术引用，建议额外通过 GitHub issue 告知，方便未来沉淀为"用过此系统的衍生项目"索引。
+> 非源码部分（prompts 设计、"观测手札"产品概念、"元知 / YUAN · ZHI" 品牌名）使用上请保持相同的署名原则。如用于商业产品或学术引用，建议额外通过 GitHub issue 告知，方便未来沉淀为"用过此系统的衍生项目"索引。
 
