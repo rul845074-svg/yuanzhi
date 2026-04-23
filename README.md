@@ -183,6 +183,17 @@ launchctl list | grep yuanzhi   # 验证
 ./scripts/sync_to_cloud.sh --dist-only  # 只推前端
 ```
 
+## 深度设计文档
+
+README 讲"这是什么 + 怎么用"。想看"为什么这么做 + 学术理论基础 + 30 天验证证据 + 数据架构"——两份深度档案：
+
+| 文档 | 内容 | 适合谁读 |
+|---|---|---|
+| [`docs/product-validation.md`](docs/product-validation.md) | 产品验证报告 v1.1 · 30 天单样本纵向实验 · 4 个学术理论（元认知 / BKT / TTM / CBT）+ 7 个已识别模式 + 4 类验证指标 + 3 类诚实反例 + 架构演化附录 H | 想知道"这个假设怎么被证实"的人；投资人；研究者 |
+| [`docs/context-design.md`](docs/context-design.md) | Context 设计文档 v1.1 · 五层 Context 架构（Prefix / Task / Memory / Retrieval / Conversation）+ 全部 JSON schema + 失效应对 + 架构演化附录 H | 想 fork 改造 / 想搞清楚数据流的人；工程师；架构师 |
+
+两份 v1 反映 3 月-4 月中旬状态，v1.1 补丁（2026-04-24）追加了后期的 M0-M11 多模块架构 + 前端 + 云端 + 自动化演化。**"引擎原地踏步，机体指数扩张"** 是核心观察 —— 引擎层（Claude 识别认知模式 + 纵向追踪）从验证期到现在没变，但围绕引擎的编排 / 调度 / 状态 / 接口 / 运维全都新加了。
+
 ## 发展历程（简略）
 
 | 里程碑 | 完成时 | 关键动作 |
