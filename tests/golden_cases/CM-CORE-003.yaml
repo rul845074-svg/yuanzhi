@@ -1,0 +1,57 @@
+id: CM-CORE-003
+title: 跨天联动 · 连续 6 天串跑
+category: 核心-跨天联动
+difficulty: hard
+description: |
+  连续 6 天（4/14~19）日志串行跑，测 B 阶段"软避 + 跨天去重"规则的实战效果。
+  验证：维度大类不重复；若发生重复，100% 写跨天对比。
+
+input:
+  type: multi_day_sequence
+  paths:
+    - "可实现/时间轴/日志/2026-04-14.md"
+    - "可实现/时间轴/日志/2026-04-15.md"
+    - "可实现/时间轴/日志/2026-04-16.md"
+    - "可实现/时间轴/日志/2026-04-17.md"
+    - "可实现/时间轴/日志/2026-04-18.md"
+    - "可实现/时间轴/日志/2026-04-19.md"
+  execution: serial  # 必须串行以保证 index 在下一天跑前已回写
+  profile: prod
+
+expected:
+  summary: |
+    - 三维度连续 6 天 0 重复（当前实战已验证）
+    - 绕开历史高频大类：CBT / 脉轮 / 信息论
+    - 若发生复用，100% 写跨天对比段（A3 触发率 = 100%）
+  baseline_data: |
+    4-14 防御机制 / 能量场 / 控制论
+    4-15 自体心理学 / 占星 / 系统论
+    4-16 身体取向 / 风水地气 / 信息论
+    4-17 自我批评与关怀 / 萨满 / 生物
+    4-18 荣格原型 / 藏传五大 / 化学
+    4-19 发展心理 / 节气月相 / 量子
+  reference_file: "可实现/系统状态/indexes/dimension_usage_index.json"
+
+primary_metrics:
+  - A3  # 跨天对比触发率（拆成 A3a 触发率 + A3b 样本量）
+  - A7  # 建议去重
+secondary_metrics:
+  - A6
+
+rubric: ../rubrics/dimension_diversity.yaml
+
+thresholds:
+  quantitative:
+    dimension_repeat_rate: 0        # 6 天 0 重复
+    cross_day_compare_when_repeat: 1.0  # 一旦重复必写对比
+    avoid_historical_high_freq: 3   # CBT/脉轮/信息论 全绕开
+  qualitative:
+    dimension_diversity_min: 4
+
+source: B 阶段 6 天实战（4/14-4/19）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+notes: |
+  B 阶段上线 6 天 0 复用 ⇒ A3 没机会触发。规则有效性仍无实证。
+  CM-REGR-009 是配套的"主动构造复用"场景，用来强迫 A3 被测。

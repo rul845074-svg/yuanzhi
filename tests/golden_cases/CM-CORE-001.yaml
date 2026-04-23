@@ -1,0 +1,45 @@
+id: CM-CORE-001
+title: 高频日常日志 · 教室闭关
+category: 核心-高频日常
+difficulty: easy
+description: |
+  作者日常一天的轻量记录日志（4/14 教室闭关做事），测系统在"普通使用场景"下的基础产出质量。
+  不包含情绪高压、跨天联动或特殊边界。
+
+input:
+  type: real_log
+  path: "可实现/时间轴/日志/2026-04-14.md"
+  profile: prod
+
+expected:
+  summary: |
+    - 能抽三维度（心理 / 玄学 / 物理），尾部便签格式正确
+    - 概念不重复（A6）
+    - 报告稳定性（同一日志跑 3 次核心模式一致率 >85%）
+    - 不出现 CBT × 依恋 × 脉轮三件套
+  key_dimensions:
+    - source: tag
+    - count: 3
+  reference_file: "docs/handoff/2026_04_14_日志整理与分析_pre_B阶段备份.md"
+
+primary_metrics:
+  - A5  # 报告稳定性
+  - A6  # 概念去重
+secondary_metrics:
+  - F3  # 维度解析成功率
+
+rubric: ../rubrics/report_quality.yaml
+
+thresholds:
+  quantitative:
+    dimension_parse_success: 1.0   # 100%
+  qualitative:
+    report_quality_min: 4  # 1-5 分 Rubric ≥4 算通过
+
+source: B 阶段实战数据（4/14 新链路重跑）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+notes: |
+  4/14 日志原本是 A 阶段旧链路产出，4/20 已重跑到 B 阶段新链路。
+  是评测集里"正常日常"的基准锚。

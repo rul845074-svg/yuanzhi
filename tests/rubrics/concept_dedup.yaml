@@ -1,0 +1,57 @@
+rubric_id: concept_dedup
+name: 概念去重
+corresponds_to: 宪法10 A6
+pass_threshold: 4
+scoring_method: 脚本比对 concept_index.json + 人工抽检近义词
+
+definitions:
+  core_power: 相同的核心动力（如"证明自己"与"不想被嫌弃"同源）
+  surface_rename: 换名不换质（如"焦虑"与"不安"）
+
+levels:
+  - score: 5
+    label: 完美
+    criteria:
+      - 相同核心动力的概念 100% 归并
+      - 换名不算新概念
+      - concept_index.json 稳定增长（非爆炸性膨胀）
+
+  - score: 4
+    label: 基本合格
+    criteria:
+      - 有 1 处近义概念未归并
+      - 但无歧义，不影响使用
+
+  - score: 3
+    label: 勉强
+    criteria:
+      - 有 2-3 处应归并未归并
+      - 或同一概念出现 2 个不同命名
+
+  - score: 2
+    label: 较差
+    criteria:
+      - 同一概念出现 ≥3 个不同命名
+      - 开始出现概念分叉（本属同源却被分成两支）
+
+  - score: 1
+    label: 不可用
+    criteria:
+      - concept_candidates.json 膨胀到不可用
+      - 单次运行新增概念数 >当日信念数 × 2
+
+automation:
+  countable_checks:
+    - check: concept_dedup_rate
+      target: ">=0.9"
+      formula: 已归并同义对 / 总同义对
+    - check: concept_explosion_ratio
+      target: "<2.0"
+      formula: 本次运行新增概念数 / 当日信念数
+      trigger_at: ">=3.0"
+      force_score: 1
+
+notes: |
+  本 Rubric 的定量部分比其它 Rubric 更容易自动化——
+  近义词归并主要看 embedding 距离 + normalized_key。
+  P1 阶段可考虑训一个 concept-merge 脚本，减少人工。

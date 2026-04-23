@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CognitiveState",
+  "type": "object",
+  "required": [
+    "meta",
+    "patterns",
+    "beliefs",
+    "metrics"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "profile",
+        "total_analyses",
+        "last_updated"
+      ],
+      "properties": {
+        "profile": { "type": "string" },
+        "total_analyses": { "type": "integer", "minimum": 0 },
+        "last_updated": { "type": "string" }
+      }
+    },
+    "patterns": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "name",
+          "status_raw",
+          "status"
+        ],
+        "properties": {
+          "name": { "type": "string" },
+          "status_raw": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "active",
+              "aware",
+              "loosening",
+              "rewriting",
+              "dormant"
+            ]
+          },
+          "latest_evidence": { "type": "string" }
+        }
+      }
+    },
+    "beliefs": {
+      "type": "object",
+      "properties": {
+        "loosening": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "growing": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "pattern_count": { "type": "integer", "minimum": 0 },
+        "rewriting_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

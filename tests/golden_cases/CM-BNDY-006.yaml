@@ -1,0 +1,40 @@
+id: CM-BNDY-006
+title: 边界 · 碎片拼贴 / 飞书闪念堆
+category: 边界-碎片
+difficulty: medium
+description: |
+  构造一份由 20 条飞书收件箱闪念搬运来的碎片日志，测系统在"非线性 / 短句密集"输入下的概念去重能力。
+  这类日志是作者实际使用中频繁出现的场景。
+
+input:
+  type: constructed
+  path: tests/fixtures/bndy_006_feishu_fragments.md
+  fixture_state: 待构造
+  construction_spec: |
+    从作者飞书收件箱导出 20 条历史闪念（不少于 5 个主题），
+    每条一行，不加整理加工，直接拼在一个文件里。
+  profile: dev
+
+expected:
+  summary: |
+    - 概念去重：相同核心动力的多个表述被归并（A6）
+    - 不出现"每条闪念一个概念"的概念膨胀
+    - 三维度分析能聚焦于最高频 2-3 个主题，不罗列 20 个
+
+primary_metrics:
+  - A6  # 概念去重
+secondary_metrics:
+  - A5
+
+rubric: ../rubrics/concept_dedup.yaml
+
+thresholds:
+  quantitative:
+    concept_dedup_rate_min: 0.9
+  qualitative:
+    concept_dedup_min: 4
+
+source: 构造（模拟作者真实使用模式）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null

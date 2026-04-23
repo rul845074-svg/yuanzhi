@@ -1,0 +1,207 @@
+{
+  "default_profile": "prod",
+  "profiles": {
+    "dev": {
+      "vault_root": "./data/sample_vault"
+    },
+    "prod": {
+      "_comment": "fork 后请填写你的 Obsidian vault 绝对路径；或拷贝本文件为 agent.config.local.json（已在 .gitignore）覆盖",
+      "vault_root": "<YOUR_OBSIDIAN_VAULT_ROOT>"
+    }
+  },
+  "paths": {
+    "daily_reports": "可实现/关于自己/每日报告",
+    "ten_day_reports": "可实现/关于自己/十日总报告",
+    "monthly_reports": "可实现/关于自己/月度汇总",
+    "growth_report": "核心/人生轨迹总览.md",
+    "material_library": "可实现/素材库",
+    "knowledge_graph": "可实现/素材库/知识图谱_物理×认知×心理.md",
+    "system_state": "可实现/系统状态",
+    "indexes": "可实现/系统状态/indexes",
+    "cognitive_state": "可实现/系统状态/cognitive_state.json",
+    "reminders": "可实现/系统状态/reminders.json",
+    "moment_feed": "可实现/系统状态/moment_feed.json",
+    "suggestion_index": "可实现/系统状态/indexes/suggestion_index.json",
+    "concept_index": "可实现/系统状态/indexes/concept_index.json",
+    "concept_candidates": "可实现/系统状态/concept_candidates.json"
+  },
+  "dashboard": {
+    "homepage_sections": [
+      "system_overview",
+      "latest_daily",
+      "pattern_states",
+      "latest_stage_reports"
+    ]
+  },
+  "tasks": {
+    "daily_analysis_report": {
+      "label": "每日报告（人读）",
+      "description": "读取当日日志，输出可读报告写回 Obsidian。允许引用原文。",
+      "prompt_path": "prompts/daily_analysis_report.md",
+      "output_type": "file",
+      "output_path": "可实现/关于自己/每日报告/{date}.md"
+    },
+    "daily_analysis_state": {
+      "label": "每日状态提取（机器读）",
+      "description": "读取当日日志 + 已有状态，输出结构化 JSON。硬禁原文。",
+      "prompt_path": "prompts/daily_analysis_state.md",
+      "output_type": "state",
+      "page_key": "daily_report"
+    },
+    "ten_day_summary": {
+      "label": "十日总结分析",
+      "description": "读取最新十日报告并刷新阶段总结页面数据。",
+      "prompt_path": "prompts/ten_day_summary.md",
+      "output_type": "page",
+      "page_key": "tenday_report"
+    },
+    "monthly_summary": {
+      "label": "月度总结分析",
+      "description": "读取最新月报并刷新月度汇总页面数据。",
+      "prompt_path": "prompts/monthly_summary.md",
+      "output_type": "page",
+      "page_key": "monthly_report"
+    },
+    "life_growth_report": {
+      "label": "人生成长报告（M4 · 月末连体 2/3）",
+      "description": "读上版「核心/人生轨迹总览.md」+ 本月月度汇总，输出一份完整新版总览（旧内容一字不动+本月塑造性新增融入 6 大板块），engine 先备份再覆盖写入。",
+      "prompt_path": "prompts/life_growth_report.md",
+      "output_type": "file",
+      "output_path": "核心/人生轨迹总览.md"
+    },
+    "next_month_astrology": {
+      "label": "下月星象参考（M8 · 月末连体 3/3）",
+      "description": "读上月月报末尾的「对本月预测」+ 本月月汇总，先做信用校准再查下月天象，替换本月月报末尾的第十节占位段（不覆盖前 9 节）。",
+      "prompt_path": "prompts/next_month_astrology.md",
+      "output_type": "file-patch",
+      "output_path": "可实现/关于自己/月度汇总/{year}_{month}_月度汇总.md#第十节"
+    },
+    "weekly_material_five": {
+      "label": "素材库五件套（M5a · 周度）",
+      "description": "每周日读本周 7 天日报，按金句/主题线索/场景片段/原创洞察/思维差异五件套提取；LLM 用 <!-- FILE: ... --> 分段标记输出增量，engine 按锚点智能追加到 5 个素材库文件。日报不足 3 篇自动跳过。",
+      "prompt_path": "prompts/weekly_material_five.md",
+      "output_type": "file-patch-multi",
+      "output_path": "可实现/素材库/素材库_*.md"
+    },
+    "monthly_knowledge_graph": {
+      "label": "知识图谱更新（M5b · 月末连体 4/4）",
+      "description": "月末读当前知识图谱 + 本月 5 件套增量段 + 本月月汇总，输出整份新版知识图谱（旧节点一字不动 + 本月新节点/新连接融入对应象限）。engine 先备份再覆盖写。",
+      "prompt_path": "prompts/monthly_knowledge_graph.md",
+      "output_type": "file",
+      "output_path": "可实现/素材库/知识图谱_物理×认知×心理.md"
+    },
+    "growth_report_update": {
+      "label": "成长总览更新",
+      "description": "聚合模式、信念和能力状态，刷新首页和成长总览视图。",
+      "prompt_path": "prompts/monthly_summary.md",
+      "output_type": "page",
+      "page_key": "home"
+    },
+    "reminder_manager": {
+      "label": "提醒管理",
+      "description": "从报告建议中构建提醒，并维护提醒状态与重复出现关系。",
+      "prompt_path": "prompts/reminder_extract.md",
+      "output_type": "state",
+      "page_key": null
+    },
+    "index_builder": {
+      "label": "索引构建",
+      "description": "重建认知状态与报告索引，供首页和后续提醒系统消费。",
+      "prompt_path": "prompts/reminder_extract.md",
+      "output_type": "index",
+      "page_key": null
+    }
+  },
+  "metadata": {
+    "frontmatter_fields": [
+      "date",
+      "type",
+      "title",
+      "tags"
+    ],
+    "type_resolution_priority": [
+      "frontmatter",
+      "h1",
+      "filename",
+      "directory"
+    ]
+  },
+  "enums": {
+    "pattern_status": [
+      "candidate",
+      "active",
+      "aware",
+      "loosening",
+      "rewriting",
+      "dormant"
+    ],
+    "reminder_status": [
+      "new",
+      "active",
+      "done",
+      "snoozed",
+      "dismissed"
+    ],
+    "reminder_horizon": [
+      "short",
+      "medium",
+      "long"
+    ]
+  },
+  "pattern_status_normalization": {
+    "split_tokens": [
+      "→",
+      "->",
+      "/",
+      "｜",
+      "|"
+    ],
+    "default_status": "active",
+    "mapping": {
+      "candidate": [
+        "候选",
+        "新出现",
+        "初现",
+        "待确认",
+        "模糊感知"
+      ],
+      "active": [
+        "活跃",
+        "反复出现",
+        "持续出现",
+        "高频",
+        "全面爆发"
+      ],
+      "aware": [
+        "已觉察",
+        "新觉察",
+        "看见",
+        "识别",
+        "命名",
+        "从隐性到显性"
+      ],
+      "loosening": [
+        "松动",
+        "减弱",
+        "缓解",
+        "脱钩",
+        "不再自动"
+      ],
+      "rewriting": [
+        "改写",
+        "重写中",
+        "深度改写",
+        "挑战中",
+        "行动中",
+        "快速转向",
+        "主动重塑"
+      ],
+      "dormant": [
+        "休眠",
+        "沉寂",
+        "暂未触发",
+        "暂停"
+      ]
+    }
+  }
+}

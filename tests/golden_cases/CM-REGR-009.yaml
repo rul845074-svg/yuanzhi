@@ -1,0 +1,50 @@
+id: CM-REGR-009
+title: 回归 · BC-001 维度重复 / 脉轮三件套
+category: 回归-bug防复发
+difficulty: medium
+description: |
+  针对 BC-001：冷启动在"CBT × 依恋 × 脉轮"窄池里循环。
+  构造连续 5 天强触发脉轮的日志（含"气""穴位""能量中心"等强关键词），
+  验证 B 阶段软避 + 玄学例外在"强触发"面前仍能跨天去重。
+
+input:
+  type: multi_day_sequence
+  paths:
+    - tests/fixtures/regr_009_day1.md
+    - tests/fixtures/regr_009_day2.md
+    - tests/fixtures/regr_009_day3.md
+    - tests/fixtures/regr_009_day4.md
+    - tests/fixtures/regr_009_day5.md
+  fixture_state: 待构造
+  construction_spec: |
+    5 天日志，每天都包含显著的身体/能量关键词，模拟作者真的连续 5 天身体信号强烈。
+    故意设计让 prompt 想选"脉轮"做玄学维度。
+  execution: serial
+  profile: dev
+
+expected:
+  summary: |
+    - 玄学维度至多允许 2 次脉轮，第 3 次起必须切换（如气脉 / 密宗五大 / 风水）
+    - 若出现复用，100% 写跨天对比段
+    - **这是 A3 规则的核心验证场景**
+
+primary_metrics:
+  - A3  # 跨天规则 + 玄学例外
+
+rubric: ../rubrics/dimension_diversity.yaml
+
+thresholds:
+  quantitative:
+    same_category_max_in_5_days: 2
+    cross_day_compare_when_repeat: 1.0
+  qualitative:
+    dimension_diversity_min: 5
+
+source: BC-001（2026-04-17 暴露，A 阶段扩池 + B 阶段外挂记忆解决）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+linked_badcase: BC-001
+notes: |
+  这是评测集里唯一能验证 A3 规则有效性的 case——实战 6 天 0 重复，
+  规则是否真的有效得靠主动构造的强触发场景来测。

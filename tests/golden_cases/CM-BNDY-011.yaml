@@ -1,0 +1,41 @@
+id: CM-BNDY-011
+title: 边界 · 超长日志 / >20kB timeout
+category: 边界-性能
+difficulty: medium
+description: |
+  针对 BC-005：4/19 日志 24560 bytes，300s timeout 不够。
+  测 llm_timeout_seconds=600 下 >20kB 日志端到端成功。
+
+input:
+  type: real_log
+  path: "可实现/时间轴/日志/2026-04-19.md"
+  profile: prod
+  input_size_bytes_min: 20000
+
+expected:
+  summary: |
+    - F1 端到端成功，不触发 subprocess.TimeoutExpired
+    - 报告产出完整（不因 LLM 被截断而只抽两维度）
+  performance:
+    wall_clock_max_seconds: 600
+
+primary_metrics:
+  - F1
+
+rubric: ../rubrics/report_quality.yaml
+
+thresholds:
+  quantitative:
+    end_to_end_success: true
+    timeout_hit: false
+  qualitative:
+    report_quality_min: 4
+
+source: BC-005（2026-04-20 修复）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+linked_badcase: BC-005
+notes: |
+  P0 遗留：llm_timeout_seconds 应抽成配置项。
+  本 case 同时盯"不 timeout"和"不因 timeout 退化"。

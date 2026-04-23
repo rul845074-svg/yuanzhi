@@ -1,0 +1,44 @@
+id: CM-BNDY-005
+title: 边界 · 超长日志
+category: 边界-超长
+difficulty: hard
+description: |
+  用 3 月份最长的一天日志（>10kB），测端到端性能和报告稳定性。
+  防止"长输入被截断"或"LLM 生成退化"。
+
+input:
+  type: real_log
+  path: 待选定  # P0-1 审校时作者指定具体日期
+  selection_criteria: 2026-03 月份字符数 top 3 的日志之一
+  profile: prod
+
+expected:
+  summary: |
+    - F1 端到端可跑，不超时（当前 llm_timeout_seconds=600）
+    - A5 报告稳定性：三维度分析完整覆盖日志主体
+    - 不出现"后半段日志被忽略"的结构性漏读
+  performance:
+    wall_clock_max_seconds: 900
+
+primary_metrics:
+  - F1  # 端到端
+  - A5  # 稳定性
+secondary_metrics:
+  - A6
+
+rubric: ../rubrics/report_quality.yaml
+
+thresholds:
+  quantitative:
+    end_to_end_success: true
+    no_timeout: true
+  qualitative:
+    report_quality_min: 4
+
+source: 3 月份实战日志（作者从长度 top 3 中选）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+notes: |
+  CM-BNDY-011（长日志 >20kB 端到端）是此 case 的加强版，专门盯 timeout。
+  CM-BNDY-005 盯"不被截断 + 后半段被分析"。

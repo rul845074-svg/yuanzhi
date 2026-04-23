@@ -1,0 +1,44 @@
+id: CM-REGR-008
+title: 回归 · BC-002 信念去重空转
+category: 回归-bug防复发
+difficulty: medium
+description: |
+  针对 BC-002：同一信念每天被反复标 candidate，因 `_load_existing_state()` 没读 beliefs/patterns。
+  构造"同一核心信念在 3 天日志里反复出现"，验证去重规则生效。
+
+input:
+  type: multi_day_sequence
+  paths:
+    - tests/fixtures/regr_008_day1.md
+    - tests/fixtures/regr_008_day2.md
+    - tests/fixtures/regr_008_day3.md
+  fixture_state: 待构造
+  construction_spec: |
+    3 天日志，每天都以不同场景触发同一核心信念（如"我必须证明自己配得上当前位置"），
+    第 1 天 candidate，第 2-3 天应 ≥2 天 ⇒ confirmed，而不是反复 candidate。
+  execution: serial
+  profile: dev
+
+expected:
+  summary: |
+    - 第 1 天：beliefs.new 含该信念，status=candidate
+    - 第 2 天：同信念不再出现在 beliefs.new，已升级为 confirmed
+    - 第 3 天：同上
+    - 不出现"每天都把同一信念标 candidate"的 BC-002 行为
+
+primary_metrics:
+  - A1  # 信念 status 流转正确
+
+rubric: ../rubrics/belief_threshold.yaml
+
+thresholds:
+  quantitative:
+    belief_duplicate_candidate: 0  # 同一信念被反复标 candidate 的次数
+  qualitative:
+    belief_threshold_min: 5  # 回归 case 要求满分
+
+source: BC-002（2026-04-18 修复）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+linked_badcase: BC-002

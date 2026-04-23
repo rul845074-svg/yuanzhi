@@ -1,0 +1,81 @@
+# ──────────────────────────────────────────────
+# 元知 · yuanzhi .gitignore
+# ──────────────────────────────────────────────
+
+# ─── 1. 个人画像 / 私域数据（绝不上传）───
+# 项目产出物 = 决策史 / bug 记录 / 打卡 / 画像 / 个人分析
+项目产出物/
+
+# 私人日志 vault 不在项目目录里（在 iCloud），但防御性写一下
+Obsidian/
+**/vault/
+**/时间轴/
+**/可实现/
+
+# 生成数据（mirror-scale / state / run logs）
+data/generated/
+data/sample_vault/
+data/prod/
+data/dev/
+
+# ─── 2. 构建产物 / 依赖缓存 ───
+node_modules/
+**/node_modules/
+apps/*/dist.backup/
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# ─── 3. 备份文件（重构过程中的冷存）───
+*.bak
+*.bak_before_*
+*.swp
+*.swo
+*~
+
+# ─── 4. 日志与临时文件 ───
+*.log
+/tmp/
+.tmp/
+
+# ─── 5. IDE / 操作系统 ───
+.DS_Store
+.vscode/
+.idea/
+*.iml
+Thumbs.db
+
+# ─── 6. 本地环境与凭证 ───
+.env
+.env.local
+**/credentials.json
+**/*_secret.*
+**/config.local.*
+config/*.local.json
+
+# ─── 7. 测试 fixtures（可能包含真实日志样本）───
+tests/fixtures/
+
+# ─── 8. 老 React SPA 源码（含作者个人画像 PREVIEW_DATA · 新 A 纸本 dist 已替代）───
+apps/cognitive-mirror-preview/src/
+apps/cognitive-mirror-preview/index.html
+
+# ─── 9. 老 React bundle（新单文件 dist/index.html 不引用）───
+apps/cognitive-mirror-preview/dist/assets/
+apps/cognitive-mirror-preview/dist/cognitive-workbench-data.js
+apps/cognitive-mirror-preview/public/cognitive-workbench-data.js
+
+# ─── 10. 含 vault_root 私域路径的文件 ───
+apps/cognitive-mirror-preview/public/mirror-scale.json
+data/generated/mirror-scale.json
+
+# ─── 11. Deploy 打包冗余（sync_to_cloud.sh 实时推即可 · tar 里可能含老敏感数据）───
+deploy/cloud/dist/
+deploy/cognitive-mirror-cloud.tar.gz
+deploy/*.tar.gz
+deploy/*.zip
+
+# ─── 12. 扩展备份后缀匹配 ───
+*.bak*

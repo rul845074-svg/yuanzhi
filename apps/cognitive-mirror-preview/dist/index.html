@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>元知 · YUAN · ZHI · 观测手札</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ease: cubic-bezier(.22,1,.36,1);
+    --t-fast: 180ms;
+    --t-base: 320ms;
+    --t-slow: 560ms;
+
+    --paper:      #F4EEDF;
+    --paper-deep: #EBE3CE;
+    --ink:        #1A1815;
+    --ink-2:      #3E3A32;
+    --ink-3:      #6E685B;
+    --ink-4:      #A8A193;
+    --rule:       #C8C0AB;
+    --hair:       rgba(26,24,21,0.12);
+    --accent:     #8A2A1A;
+    --tag-a:      #4F6E5F;
+    --tag-b:      #8E6A2E;
+    --tag-c:      #7A4B5A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "palt" 1, "kern" 1;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Serif SC","Songti SC",serif;
+  }
+  body { min-height: 100vh; padding: 64px 72px 120px; max-width: 1440px; margin: 0 auto; min-width: 1120px; }
+  button { background: none; border: 0; font: inherit; color: inherit; cursor: pointer; }
+  ::selection { background: rgba(138,42,26,0.18); }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* ============ letterhead ============ */
+  .letterhead {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: end;
+    padding-bottom: 28px; border-bottom: 1px solid var(--ink); margin-bottom: 56px;
+  }
+  .letterhead .lh-left {
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--ink-3); line-height:1.7;
+  }
+  .letterhead .lh-mid { text-align:center; }
+  .letterhead .lh-mid .title-en {
+    font-family:"Cormorant Garamond",serif; font-weight:300; font-size:44px;
+    letter-spacing:0.22em; line-height:1;
+  }
+  .letterhead .lh-mid .title-cn {
+    margin-top:12px; font-size:15px; letter-spacing:0.55em; color: var(--ink-2); padding-left:0.55em;
+  }
+  .letterhead .lh-mid .seal {
+    display:inline-block; margin-left: 8px; border:1.5px solid var(--accent); color:var(--accent);
+    padding: 2px 6px 1px; font-size:10px; letter-spacing: 0.1em;
+    font-family:"Noto Serif SC",serif; vertical-align: 3px;
+  }
+  .letterhead .lh-right {
+    text-align: right;
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:0.15em;
+    text-transform:uppercase; color:var(--ink-3); line-height:1.7;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+  }
+
+  /* ============ OPS · 操作台 ============ */
+  .ops-bar {
+    margin: -32px 0 48px;
+    padding: 22px 0 18px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .ops-bar-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 14px;
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .ops-bar-head .op-status {
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px; letter-spacing: 0.16em;
+    color: var(--ink-4); text-transform: none;
+  }
+  .ops-bar-head .op-status.ok  { color: var(--tag-a); }
+  .ops-bar-head .op-status.err { color: var(--accent); }
+  .ops-buttons {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  }
+  .ops-buttons .op-btn {
+    font-family:"Noto Serif SC",serif; font-size: 12.5px; letter-spacing: 0.2em;
+    padding: 7px 16px 6px; border: 1px solid var(--accent); color: var(--accent);
+    background: transparent; transition: all var(--t-fast) var(--ease);
+    text-transform: none; white-space: nowrap;
+  }
+  .ops-buttons .op-btn:hover { background: var(--accent); color: var(--paper); }
+  .ops-buttons .op-btn[disabled] { opacity: 0.45; cursor: wait; }
+
+  .ops-date {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px 5px; border: 1px solid var(--ink);
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); background: transparent;
+    margin-right: 4px;
+  }
+  .ops-date input[type="date"] {
+    font-family:"IBM Plex Mono",monospace; font-size: 11.5px;
+    letter-spacing: 0.1em; color: var(--ink);
+    background: transparent; border: 0; padding: 0; outline: none;
+    font-variant-numeric: tabular-nums; cursor: pointer;
+    color-scheme: light;
+  }
+  .ops-date .quick {
+    font-family:"Noto Serif SC",serif; font-size: 11px; letter-spacing: 0.15em;
+    color: var(--ink-3); border: 0; background: transparent; padding: 0 4px;
+    cursor: pointer; border-bottom: 1px dotted var(--hair);
+  }
+  .ops-date .quick:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .ops-hint {
+    margin-top: 10px;
+    font-family:"IBM Plex Mono",monospace; font-size: 10px; letter-spacing: 0.14em;
+    color: var(--ink-4); font-style: italic;
+  }
+  .ops-progress {
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 16px;
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px;
+    color: var(--ink-3); letter-spacing: 0.12em;
+  }
+  .ops-progress[hidden] { display: none; }
+  .ops-progress .outer {
+    font-family:"Noto Serif SC",serif; font-size: 11.5px; letter-spacing: 0.14em;
+    color: var(--ink); padding: 3px 10px 2px;
+    border: 1px solid var(--ink); white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .ops-progress .outer.single { display: none; }
+  .ops-progress .step-count {
+    font-variant-numeric: tabular-nums; letter-spacing: 0.15em;
+    color: var(--ink); min-width: 56px;
+  }
+  .ops-progress .bar {
+    flex: 1; max-width: 420px; height: 2px;
+    background: var(--hair); position: relative;
+  }
+  .ops-progress .bar span {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--accent); width: 0;
+    transition: width 400ms var(--ease);
+  }
+  .ops-progress .bar.err span { background: var(--accent); height: 3px; top: -0.5px; }
+  .ops-progress .label {
+    color: var(--ink-2); letter-spacing: 0.08em; font-family:"Noto Serif SC",serif;
+    font-size: 12.5px; flex: 1;
+  }
+  .ops-progress .label.err { color: var(--accent); }
+
+  /* ============ rubric ============ */
+  .rubric {
+    display:grid; grid-template-columns: auto 1fr auto; align-items:center; gap: 16px;
+    margin: 72px 0 32px;
+  }
+  .rubric .ch-en {
+    font-family:"Cormorant Garamond",serif; font-weight:300; font-size:13px;
+    letter-spacing:0.3em; text-transform:uppercase; color:var(--ink-3);
+  }
+  .rubric .line { height:1px; background: var(--ink); }
+  .rubric .ch-cn { font-size:14px; letter-spacing:0.4em; color:var(--ink-2); }
+
+  /* ============ delta badge (跑完任务后浮动 "+N" 即时反馈) ============ */
+  .delta-badge {
+    position: absolute; top: -14px; right: -6px;
+    font-family:"IBM Plex Mono",monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.12em; color: var(--accent); background: var(--paper);
+    padding: 2px 8px 1px; border: 1px solid var(--accent);
+    animation: delta-rise 3800ms var(--ease) forwards;
+    pointer-events: none; z-index: 10; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .delta-badge.small { font-size: 11px; top: -10px; right: -4px; padding: 1px 6px 0; }
+  @keyframes delta-rise {
+    0%   { opacity: 0; transform: translateY(10px); }
+    12%  { opacity: 1; transform: translateY(0); }
+    80%  { opacity: 1; transform: translateY(-4px); }
+    100% { opacity: 0; transform: translateY(-28px); }
+  }
+
+  /* ============ has-delta hover tooltip（持久，localStorage 存）============ */
+  .has-delta { cursor: help; }
+  .has-delta::before {
+    content: ""; position: absolute;
+    top: -4px; right: -4px;
+    width: 6px; height: 6px; background: var(--accent);
+    border-radius: 50%; z-index: 5;
+    animation: dot-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%,100% { opacity: 0.5; }
+    50%     { opacity: 1; }
+  }
+  .has-delta::after {
+    content: attr(data-delta);
+    position: absolute; top: -32px; right: 0;
+    font-family:"IBM Plex Mono",monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; color: var(--paper); background: var(--accent);
+    padding: 4px 10px 3px; white-space: nowrap;
+    opacity: 0; pointer-events: none; z-index: 25;
+    transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+    transform: translateY(4px);
+    font-variant-numeric: tabular-nums;
+  }
+  .has-delta:hover::after {
+    opacity: 1; transform: translateY(0);
+  }
+  .pillar .big.has-delta::after { top: auto; bottom: calc(100% - 10px); right: 0; }
+  .disc .big.has-delta::after { top: auto; bottom: calc(100% - 4px); right: 0; }
+
+  /* ============ pillars (I · 沉淀) ============ */
+  .hero-grand { display:grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 24px; }
+  .pillars { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair); }
+  .pillar { padding: 36px 32px; border-left:1px solid var(--hair); position:relative; }
+  .pillar:first-child { border-left:0; padding-left: 0; }
+  .pillar:last-child { padding-right: 0; }
+  .pillar .eyebrow {
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing: 0.22em;
+    text-transform:uppercase; color:var(--ink-3); display:flex; justify-content:space-between;
+  }
+  .pillar .big {
+    font-family:"Cormorant Garamond","Noto Serif SC",serif; font-weight:300; font-size: 108px;
+    line-height:1; letter-spacing:-2px; margin: 18px 0 4px; color:var(--ink);
+    font-variant-numeric: tabular-nums; position: relative;
+  }
+  .pillar .big .unit {
+    font-size: 22px; letter-spacing: 0.1em; color:var(--ink-3); margin-left:8px;
+    font-family:"Noto Serif SC",serif;
+  }
+  .pillar .subline { font-family:"Noto Serif SC",serif; font-size:13px; color:var(--ink-2); letter-spacing: 0.05em; margin-top: 6px; }
+  .pillar .breakdown { margin-top: 24px; display:flex; flex-direction:column; gap:6px; }
+  .pillar .row {
+    display:grid; grid-template-columns: 1fr auto; align-items:baseline;
+    font-size:13px; padding: 5px 0; border-bottom: 1px dotted var(--hair);
+    position: relative;
+  }
+  .pillar .row .lbl { color:var(--ink-2); }
+  .pillar .row .val {
+    font-family:"IBM Plex Mono",monospace; color:var(--ink);
+    font-variant-numeric: tabular-nums; font-size:12.5px;
+  }
+  .pillar .row .check { color:var(--accent); font-family:"Noto Serif SC",serif; }
+
+  /* ============ disc (II · 辨识) ============ */
+  .disc-row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0; margin-top:0; border-bottom:1px solid var(--hair); }
+  .disc { padding: 28px 32px; border-left:1px solid var(--hair); }
+  .disc:first-child { border-left:0; padding-left:0; }
+  .disc:last-child { padding-right:0; }
+  .disc .eyebrow {
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing: 0.22em;
+    text-transform:uppercase; color:var(--ink-3); display:flex; justify-content:space-between;
+  }
+  .disc .big {
+    font-family:"Cormorant Garamond",serif; font-weight:300; font-size: 56px; line-height:1;
+    margin: 12px 0 4px; letter-spacing:-1px; font-variant-numeric: tabular-nums;
+    position: relative;
+  }
+  .disc .big .unit { font-size:14px; letter-spacing:0.1em; color:var(--ink-3); margin-left:6px; font-family:"Noto Serif SC",serif; }
+  .disc .subline { font-size:12.5px; color:var(--ink-2); }
+  .disc .chips { margin-top:14px; display:flex; flex-wrap:wrap; gap: 6px 8px; }
+  .disc .chip {
+    font-family:"Noto Serif SC",serif; font-size:12px; padding: 3px 8px;
+    border:1px solid var(--hair); color:var(--ink-2);
+    display:inline-flex; align-items:baseline; gap: 6px; border-radius: 0;
+  }
+  .disc .chip .n {
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============ capacities (II.v · 能力盘) ============ */
+  .caps {
+    display:grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+    border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair);
+  }
+  .cap { padding: 26px 24px; border-left: 1px solid var(--hair); }
+  .cap:first-child { border-left: 0; padding-left: 0; }
+  .cap:last-child { padding-right: 0; }
+  .cap .nm { font-family:"Noto Serif SC",serif; font-size: 15px; color: var(--ink); letter-spacing: 0.08em; }
+  .cap .sc {
+    font-family:"Cormorant Garamond",serif; font-weight: 300; font-size: 40px; line-height: 1;
+    margin-top: 14px; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .cap .sc .m { font-family:"Noto Serif SC",serif; font-size: 13px; color: var(--ink-4); margin-left: 4px; }
+  .cap .meter { margin-top: 12px; height: 1px; background: var(--ink-4); position: relative; }
+  .cap .meter span { position: absolute; inset: 0 auto 0 0; background: var(--ink); height: 1px; }
+  .cap .meter.bottleneck span { background: var(--accent); height: 2px; top: -0.5px; }
+  .cap .lbl {
+    margin-top: 8px; font-family:"IBM Plex Mono",monospace; font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .cap .lbl.bottleneck { color: var(--accent); }
+
+  /* ============ rhythm ============ */
+  .rhythm { margin-top: 48px; }
+  .rhythm-header {
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom: 14px;
+  }
+  .rhythm-grid { display:grid; grid-template-columns: repeat(30, 1fr); gap: 5px; align-items:end; height: 92px; }
+  .rhythm-grid .bar { background: var(--ink); width: 100%; min-height: 2px; transition: background var(--t-base) var(--ease); }
+  .rhythm-grid .bar[data-hi="1"] { background: var(--accent); }
+  .rhythm-scale {
+    display:flex; justify-content:space-between;
+    font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:0.15em;
+    color:var(--ink-4); margin-top: 10px;
+  }
+
+  /* ============ quote ============ */
+  .quote-block {
+    margin-top: 56px; display:grid; grid-template-columns: auto 1fr auto; align-items:center; gap: 32px;
+    padding: 48px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  }
+  .quote-block .qmark {
+    font-family:"Cormorant Garamond",serif; font-size: 92px; line-height: 0.4; color: var(--accent);
+    user-select:none; padding-top: 30px;
+  }
+  .quote-block .qtext {
+    font-family:"Noto Serif SC",serif; font-weight: 300; font-size: 28px; line-height: 1.5;
+    letter-spacing: 0.04em; color: var(--ink); transition: opacity var(--t-slow) var(--ease);
+  }
+  .quote-block .qmeta {
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing: 0.18em; color: var(--ink-3);
+    text-align:right; white-space:nowrap; line-height:1.6;
+  }
+  .quote-block .qnav { display:flex; gap:12px; margin-top: 10px; justify-content:flex-end; }
+  .quote-block .qnav button {
+    width: 26px; height: 26px; border:1px solid var(--ink-3); color:var(--ink-2); font-size:11px;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition: all var(--t-fast) var(--ease);
+  }
+  .quote-block .qnav button:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* ============ fold mark ============ */
+  .fold-mark {
+    text-align:center; font-family:"Cormorant Garamond",serif; color: var(--ink-4);
+    font-size:10px; letter-spacing:0.5em; margin: 36px 0;
+  }
+
+  /* ============ patterns index (III) ============ */
+  .index-list { display:grid; grid-template-columns: repeat(2, 1fr); gap: 0 48px; }
+  .idx-row {
+    display:grid; grid-template-columns: 26px 1fr auto auto; gap: 0 14px; align-items: baseline;
+    padding: 16px 0; border-bottom: 1px dotted var(--hair);
+    transition: background var(--t-fast) var(--ease);
+  }
+  .idx-row:hover { background: rgba(138,42,26,0.04); }
+  .idx-row .num { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-4); font-variant-numeric: tabular-nums; letter-spacing: 0.1em; }
+  .idx-row .name { font-family:"Noto Serif SC",serif; font-size: 17px; letter-spacing: 0.04em; color: var(--ink); }
+  .idx-row .meta { font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-3); letter-spacing:0.12em; text-transform:uppercase; }
+  .idx-row .conf { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-2); font-variant-numeric: tabular-nums; }
+  .idx-row .tag { display:inline-block; width: 8px; height: 8px; margin-right: 6px; transform: translateY(-1px); }
+  .idx-row .tag[data-c="psy"] { background: var(--tag-c); }
+  .idx-row .tag[data-c="cbt"] { background: var(--tag-b); }
+  .idx-row .tag[data-c="physics"] { background: var(--tag-a); }
+  .trend { display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:11px; padding: 0 6px; color: var(--ink-2); border:1px solid var(--hair); }
+  .trend[data-t="down"] { color: var(--tag-a); border-color: var(--tag-a); }
+  .trend[data-t="up"] { color: var(--accent); border-color: var(--accent); }
+
+  /* ============ beliefs (IV) ============ */
+  .beliefs { display:flex; flex-direction: column; gap: 0; }
+  .belief-row {
+    display:grid; grid-template-columns: 140px 1fr 120px; gap: 24px; align-items:center;
+    padding: 18px 0; border-bottom: 1px dotted var(--hair);
+  }
+  .belief-row .domain { font-family:"Noto Serif SC",serif; font-size: 17px; letter-spacing:0.04em; }
+  .belief-row .track { position: relative; height: 16px; border-bottom: 1px solid var(--hair); }
+  .belief-row .mark {
+    position:absolute; top: 50%; transform: translate(-50%,-50%);
+    font-family:"IBM Plex Mono",monospace; font-size: 10px; letter-spacing:0.12em; color: var(--ink-2);
+    background: var(--paper); padding: 0 6px;
+  }
+  .belief-row .mark::before { content:""; position:absolute; left:50%; top: -10px; transform:translateX(-50%); width:6px; height:6px; background:var(--ink); border-radius: 50%; }
+  .belief-row .mark[data-kind="pending"]::before { background: transparent; border: 1px solid var(--ink-4); }
+  .belief-row .mark[data-kind="established"]::before { background: var(--accent); }
+  .belief-row .mark[data-kind="established"] { color: var(--accent); }
+  .belief-row .status { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:0.16em; text-align:right; color:var(--ink-3); text-transform:uppercase; }
+
+  /* ============ mechanisms (V) ============ */
+  .mechs { display:grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair); }
+  .mech { padding: 24px 20px; border-left: 1px solid var(--hair); }
+  .mech:first-child { border-left:0; padding-left:0; }
+  .mech:last-child { padding-right:0; }
+  .mech .nm { font-family:"Noto Serif SC",serif; font-size:16px; letter-spacing:0.04em; line-height:1.4; }
+  .mech .count { margin-top: 16px; font-family:"Cormorant Garamond",serif; font-weight:300; font-size: 42px; line-height:1; }
+  .mech .count .x { font-family:"Noto Serif SC",serif; font-size:13px; color:var(--ink-3); margin-left:4px; }
+  .mech .src { margin-top: 8px; font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--ink-3); letter-spacing:0.15em; text-transform: uppercase; }
+
+  /* ============ open topics (VI · 未解话题) ============ */
+  .topics { display:grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .topic-card {
+    padding: 24px 28px; border: 1px solid var(--hair);
+    background: rgba(235,227,206,0.5);
+    transition: background var(--t-fast) var(--ease);
+  }
+  .topic-card:hover { background: rgba(235,227,206,0.9); }
+  .topic-card .tc-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px dotted var(--hair);
+  }
+  .topic-card .tc-domain {
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .topic-card .tc-flag {
+    font-family:"Noto Serif SC",serif; font-size: 10.5px; letter-spacing: 0.2em; color: var(--accent);
+  }
+  .topic-card .tc-title {
+    font-family:"Noto Serif SC",serif; font-size: 18px; color: var(--ink); letter-spacing: 0.05em;
+    line-height: 1.4; margin-bottom: 10px;
+  }
+  .topic-card .tc-note {
+    font-family:"Noto Serif SC",serif; font-size: 13.5px; color: var(--ink-2);
+    line-height: 1.7; letter-spacing: 0.03em;
+  }
+
+  /* ============ colophon ============ */
+  .colophon {
+    margin-top: 88px; padding-top: 28px; border-top: 1px solid var(--ink);
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    font-family:"IBM Plex Mono",monospace; font-size: 10.5px; letter-spacing: 0.2em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+  .colophon .center { text-align:center; }
+  .colophon .right { text-align:right; }
+</style>
+</head>
+<body>
+
+<header class="letterhead">
+  <div class="lh-left">
+    No. 044 · 第四十四号手札<br/>
+    YUAN · ZHI · 2026 · III / IV
+  </div>
+  <div class="lh-mid">
+    <div class="title-en">YUAN &middot; ZHI</div>
+    <div class="title-cn">元 · 知 · 观 · 测 手 札 <span class="seal">鉴</span></div>
+  </div>
+  <div class="lh-right">
+    <div>AS OF · <span id="as-of">2026.04.23</span></div>
+    <div>PAGE 01 / 01</div>
+  </div>
+</header>
+
+<section class="ops-bar">
+  <div class="ops-bar-head">
+    <span>OPS · 操 作 台</span>
+    <span class="op-status" id="op-status">就绪 · 空闲</span>
+  </div>
+  <div class="ops-buttons">
+    <div class="ops-date">
+      <span>日期</span>
+      <input type="date" id="op-date" />
+      <button type="button" class="quick" data-quick="today">今日</button>
+      <button type="button" class="quick" data-quick="yesterday">昨日</button>
+    </div>
+    <button class="op-btn" data-tasks="daily_analysis_report,daily_analysis_state"                  data-label="日报">跑 · 日报</button>
+    <button class="op-btn" data-tasks="weekly_material_five"                                        data-label="素材库">跑 · 素材库</button>
+    <button class="op-btn" data-tasks="ten_day_summary"                                             data-label="十日">跑 · 十日</button>
+    <button class="op-btn" data-tasks="monthly_summary,next_month_astrology,monthly_knowledge_graph" data-label="月汇">跑 · 月汇</button>
+    <button class="op-btn" data-tasks="life_growth_report"                                          data-label="人生轨迹">跑 · 人生轨迹</button>
+  </div>
+  <div class="ops-hint">日期要求：<b>日报</b> 任意日（vault 要有该日日志）· <b>素材库</b> 必须周日（M5a 硬校验）· <b>十日</b> 任意日（后端推窗口）· <b>月汇</b> 任意日（后端推月末）· <b>人生轨迹</b> 月汇跑完后再点（M4 读本月月汇产物）。</div>
+  <div class="ops-progress" id="ops-progress" hidden>
+    <span class="outer" id="op-outer">—</span>
+    <span class="step-count" id="op-step">0 / 0</span>
+    <div class="bar" id="op-bar"><span id="op-bar-fill"></span></div>
+    <span class="label" id="op-label">等待开始…</span>
+  </div>
+</section>
+
+<div class="rubric"><span class="ch-en">I · Accumulation</span><span class="line"></span><span class="ch-cn">沉 · 淀</span></div>
+
+<section class="hero-grand">
+  <div class="pillars">
+    <div class="pillar">
+      <div class="eyebrow"><span>REPORTS</span><span>报 告</span></div>
+      <div class="big tnum" data-pillar="reports" data-count="44">0<span class="unit">份</span></div>
+      <div class="subline">按日 · 按旬 · 按月 · 已入册</div>
+      <div class="breakdown" id="rep-breakdown"></div>
+    </div>
+    <div class="pillar">
+      <div class="eyebrow"><span>MATERIAL</span><span>素 材 库</span></div>
+      <div class="big tnum" data-pillar="material" data-count="186">0<span class="unit">条</span></div>
+      <div class="subline" id="mat-subline">五 类 · 共 一 百 八 十 六</div>
+      <div class="breakdown" id="mat-breakdown"></div>
+    </div>
+    <div class="pillar">
+      <div class="eyebrow"><span>CONCEPTS</span><span>知 识 图 谱</span></div>
+      <div class="big tnum" data-pillar="concepts" data-count="28">0<span class="unit">个</span></div>
+      <div class="subline" id="kg-subline">三 域 · 跨 域 连 接 4 条</div>
+      <div class="breakdown" id="kg-breakdown"></div>
+    </div>
+  </div>
+</section>
+
+<div class="rubric"><span class="ch-en">II · Discernment</span><span class="line"></span><span class="ch-cn">辨 · 识</span></div>
+
+<section class="disc-row">
+  <div class="disc">
+    <div class="eyebrow"><span>PATTERNS</span><span>模 式</span></div>
+    <div class="big tnum" data-pillar="patterns" data-count="7">0<span class="unit">个</span></div>
+    <div class="subline" id="pat-subline">重写 5 · 活跃 2 · 候选 0</div>
+    <div class="chips" id="pat-mini"></div>
+  </div>
+  <div class="disc">
+    <div class="eyebrow"><span>BELIEFS</span><span>信 念 迁 移</span></div>
+    <div class="big tnum" data-pillar="beliefs" data-count="8">0<span class="unit">条</span></div>
+    <div class="subline" id="bel-subline">已确立 2 · 进行中 4 · 待启动 2</div>
+    <div class="chips" id="bel-mini"></div>
+  </div>
+  <div class="disc">
+    <div class="eyebrow"><span>MECHANISMS</span><span>已 验 证 机 制</span></div>
+    <div class="big tnum" data-pillar="mechanisms" data-count="5">0<span class="unit">条</span></div>
+    <div class="subline" id="mech-subline">累积验证 19 次 · 物理 / 认知 / 心理</div>
+    <div class="chips" id="mech-mini"></div>
+  </div>
+</section>
+
+<div class="rubric"><span class="ch-en">II.v · Capacities</span><span class="line"></span><span class="ch-cn">能 力 盘</span></div>
+
+<section class="caps" id="caps-list"></section>
+
+<section class="rhythm">
+  <div class="rhythm-header"><span>Rhythm · 近 三 十 日 节 奏</span><span id="rhythm-range">3.25 → 4.23</span></div>
+  <div class="rhythm-grid" id="rhythm-grid"></div>
+  <div class="rhythm-scale"><span>三 月 末</span><span>·</span><span>四 月 初</span><span>·</span><span>四 月 中</span><span>·</span><span>今 日</span></div>
+</section>
+
+<section class="quote-block">
+  <div class="qmark">&ldquo;</div>
+  <div>
+    <div class="qtext" id="qtext">以我为中心，不再是一种姿态。</div>
+  </div>
+  <div class="qmeta">
+    <div id="qmeta-date">2026.03.12</div>
+    <div id="qmeta-idx">1 / 6</div>
+    <div class="qnav">
+      <button id="qprev" aria-label="上一句">‹</button>
+      <button id="qnext" aria-label="下一句">›</button>
+    </div>
+  </div>
+</section>
+
+<div class="fold-mark">❋ ❋ ❋</div>
+
+<div class="rubric"><span class="ch-en">III · Patterns · Index</span><span class="line"></span><span class="ch-cn">模 式 索 引</span></div>
+<section class="index-list" id="patterns-list"></section>
+
+<div class="rubric"><span class="ch-en">IV · Belief Migrations</span><span class="line"></span><span class="ch-cn">信 念 迁 移</span></div>
+<section class="beliefs" id="beliefs-list"></section>
+
+<div class="rubric"><span class="ch-en">V · Verified Mechanisms</span><span class="line"></span><span class="ch-cn">已 验 证 机 制</span></div>
+<section class="mechs" id="mech-list"></section>
+
+<div class="rubric"><span class="ch-en">VI · Open Topics</span><span class="line"></span><span class="ch-cn">未 解 话 题</span></div>
+<section class="topics" id="topics-list"></section>
+
+<footer class="colophon">
+  <div>YUAN · ZHI · 元 知 观 测 手 札</div>
+  <div class="center">❋</div>
+  <div class="right">印于 2026 · 汝霖鉴</div>
+</footer>
+
+<script>
+/* ============================================================
+ * 元知 · 观测手札 · 前端数据层（D-047 灰度 v1）
+ * 数据来源：
+ *   - 规模（reports/material/knowledge_graph/as_of）→ /api/mirror-scale 真数据
+ *   - 其余（模式/信念/机制/能力/节奏/金句/未解话题）→ FALLBACK（§9.7 真实快照派生；
+ *     等 generate_frontend_scale v2 扩容后统一走 /api/mirror-scale）
+ * ============================================================ */
+const FALLBACK = {
+  generated_at: "2026-04-23T01:17:00+08:00",
+  as_of: "2026.04.23",
+  reports:       { daily_total: 44, ten_day_total: 4, monthly_total: 1, growth_exists: true },
+  material_library: {
+    total: 186,
+    categories: [
+      { name: "主题线索", count: 37 },
+      { name: "原创洞察", count: 42 },
+      { name: "思维差异", count: 9  },
+      { name: "场景片段", count: 47 },
+      { name: "金句集",   count: 51 },
+    ],
+  },
+  knowledge_graph: {
+    concept_total: 28,
+    categories: [
+      { name: "物理学",     count: 11 },
+      { name: "认知行为学", count: 8  },
+      { name: "心理学",     count: 9  },
+    ],
+    cross_domain_links: 4,
+  },
+  patterns_stats: { total: 7, rewriting: 5, active: 2, candidate: 0 },
+  patterns: [
+    { professional_name:"外部确认依赖",   source_system:"依恋理论",       status_label:"重写中", confidence:0.90, evidence_count:6, trigger_trend:"down", category:"psy" },
+    { professional_name:"保护性沉默",     source_system:"创伤心理学",     status_label:"重写中", confidence:0.82, evidence_count:4, trigger_trend:"down", category:"psy" },
+    { professional_name:"等-待合法化",    source_system:"CBT 自动思维链", status_label:"活跃",   confidence:0.76, evidence_count:5, trigger_trend:"flat", category:"cbt" },
+    { professional_name:"关系角色固化",   source_system:"依恋理论",       status_label:"重写中", confidence:0.71, evidence_count:3, trigger_trend:"down", category:"psy" },
+    { professional_name:"预期灾难化",     source_system:"认知偏差",       status_label:"重写中", confidence:0.68, evidence_count:4, trigger_trend:"down", category:"cbt" },
+    { professional_name:"主体参照系外置", source_system:"图式治疗",       status_label:"重写中", confidence:0.64, evidence_count:3, trigger_trend:"flat", category:"psy" },
+    { professional_name:"发声阈值抬高",   source_system:"自我效能感",     status_label:"活跃",   confidence:0.58, evidence_count:2, trigger_trend:"up",   category:"cbt" },
+  ],
+  belief_migrations: [
+    { domain:"自我价值",   status_label:"已确立", loosening_date:"2026-03-08", established_date:"2026-03-23" },
+    { domain:"表达权利",   status_label:"进行中", loosening_date:"2026-03-12", established_date:null         },
+    { domain:"关系位置",   status_label:"进行中", loosening_date:"2026-03-19", established_date:null         },
+    { domain:"时间主权",   status_label:"已确立", loosening_date:"2026-02-24", established_date:"2026-03-11" },
+    { domain:"判断优先级", status_label:"待启动", loosening_date:null,         established_date:null         },
+    { domain:"身体信号",   status_label:"进行中", loosening_date:"2026-04-02", established_date:null         },
+    { domain:"失败容忍",   status_label:"进行中", loosening_date:"2026-03-28", established_date:null         },
+    { domain:"公开表达",   status_label:"待启动", loosening_date:null,         established_date:null         },
+  ],
+  belief_stats: { total: 8, established: 2, in_progress: 4, pending: 2 },
+  verified_mechanisms: [
+    { professional_name:"预期-体验差异", source_system:"认知偏差", verification_count:6 },
+    { professional_name:"阻尼衰减",     source_system:"物理学",   verification_count:4 },
+    { professional_name:"最小行动阈值", source_system:"行为激活", verification_count:4 },
+    { professional_name:"主体位置回收", source_system:"图式治疗", verification_count:3 },
+    { professional_name:"相变不可逆",   source_system:"物理学",   verification_count:2 },
+  ],
+  capabilities: [
+    { name:"自我觉察", score:8, max:10, state_label:"稳定运行", bottleneck:false },
+    { name:"主体判断", score:7, max:10, state_label:"稳定运行", bottleneck:false },
+    { name:"公开表达", score:5, max:10, state_label:"核心瓶颈", bottleneck:true  },
+    { name:"情绪命名", score:7, max:10, state_label:"稳定运行", bottleneck:false },
+    { name:"身体校准", score:6, max:10, state_label:"上升中",   bottleneck:false },
+    { name:"关系边界", score:6, max:10, state_label:"上升中",   bottleneck:false },
+  ],
+  activity_density: [1,1,2,2,2,3,3, 2,1,2,3,5,6,7, 5,3,2,1,3,4,5, 6,7,6,5,3,1,2, 3,4],
+  activity_range: "3.25 → 4.23",
+  quote_pool: [
+    { text:"以我为中心，不再是一种姿态。",     date:"2026.03.12" },
+    { text:"等不是储能，是逐日流失。",         date:"2026.03.19" },
+    { text:"先自己判断一次，再让外部验证。",   date:"2026.03.23" },
+    { text:"保护性沉默不是哑巴，是在省电。",   date:"2026.04.02" },
+    { text:"阈值压到三轮，就能一直运转。",     date:"2026.04.07" },
+    { text:"主体位置在哪里，远比做什么更重要。", date:"2026.04.14" },
+  ],
+  open_topics: [
+    { source_domain:"公开表达",     topic_title:"表达加载问题",   note:"需要区分：是思维速度不足，还是高压下加载延迟；下周起做一次压测。", flag:"高 · 持续观察" },
+    { source_domain:"关系边界",     topic_title:"反馈护栏落地",   note:"48 小时反馈护栏已立规，但在亲密场景下节奏尚未稳定。",               flag:"中 · 落地中" },
+    { source_domain:"外部确认依赖", topic_title:"依赖回弹",       note:"高压场景下仍有回弹，需要持续 3 期确认是否彻底拉平。",               flag:"中 · 复核" },
+    { source_domain:"最小行动阈值", topic_title:"阈值是否继续下移", note:"从 5 轮到 3 轮已稳定；是否进一步下压到 1 轮需要先明确风险。",       flag:"低 · 待决" },
+  ],
+};
+
+let DATA = JSON.parse(JSON.stringify(FALLBACK));
+
+/* ─── 用 /api/mirror-scale 覆盖规模部分 ─── */
+async function loadScale() {
+  try {
+    const r = await fetch('/api/mirror-scale', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j.reports)           DATA.reports          = j.reports;
+    if (j.material_library)  DATA.material_library = j.material_library;
+    if (j.knowledge_graph) {
+      DATA.knowledge_graph.concept_total       = j.knowledge_graph.concept_total ?? DATA.knowledge_graph.concept_total;
+      DATA.knowledge_graph.categories          = j.knowledge_graph.categories    || DATA.knowledge_graph.categories;
+      DATA.knowledge_graph.cross_domain_links  = j.knowledge_graph.cross_domain_links ?? DATA.knowledge_graph.cross_domain_links;
+    }
+    if (j.generated_at) {
+      const d = new Date(j.generated_at);
+      DATA.as_of = d.getFullYear() + '.' +
+        String(d.getMonth()+1).padStart(2,'0') + '.' +
+        String(d.getDate()).padStart(2,'0');
+    }
+    setStatus('规模快照 已同步', 'ok');
+  } catch (e) {
+    setStatus('规模快照 未连通 · fallback', 'err');
+    console.warn('[mirror-scale] fetch failed:', e);
+  }
+}
+
+function setStatus(msg, kind='') {
+  const el = document.getElementById('op-status');
+  el.textContent = msg;
+  el.className = 'op-status ' + kind;
+}
+
+/* ─── count-up（从 DOM 当前值开始，避免每次 render 都从 0 跳）─── */
+function setNum(el, v) {
+  if (el.firstChild && el.firstChild.nodeType === 3) { el.firstChild.nodeValue = v.toString(); }
+  else { el.insertBefore(document.createTextNode(v.toString()), el.firstChild); }
+}
+function readCurrentNum(el) {
+  if (el.firstChild && el.firstChild.nodeType === 3) {
+    const n = parseInt(el.firstChild.nodeValue, 10);
+    return isNaN(n) ? 0 : n;
+  }
+  return 0;
+}
+function animateCountUp(el, target, dur=900) {
+  const from = readCurrentNum(el);
+  setNum(el, target);  // fallback (如果 rAF 被节流也能看到终值)
+  if (from === target) return;
+  setNum(el, from);
+  const start = performance.now();
+  const delta = target - from;
+  function step(t) {
+    const p = Math.min(1,(t-start)/dur);
+    const eased = 1 - Math.pow(1-p,3);
+    setNum(el, Math.round(from + delta * eased));
+    if (p < 1) requestAnimationFrame(step); else setNum(el, target);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ─── delta badge（浮动 "+N" 徽章，3.8s 自动消失）─── */
+function showDeltaBadge(targetOrSelector, diff, opts = {}) {
+  const el = typeof targetOrSelector === 'string'
+    ? document.querySelector(targetOrSelector)
+    : targetOrSelector;
+  if (!el || diff === 0) return;
+  if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+  const badge = document.createElement('span');
+  badge.className = 'delta-badge' + (opts.small ? ' small' : '');
+  badge.textContent = (diff > 0 ? '+' : '') + diff;
+  el.appendChild(badge);
+  setTimeout(() => badge.remove(), 4000);
+}
+
+/* ─── 持久化 delta（localStorage）+ hover tooltip ─── */
+const DELTA_STORAGE_KEY = 'yuanzhi_field_deltas_v1';
+const DELTA_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;  // 7 天后自动清除
+
+function loadFieldDeltas() {
+  try {
+    const raw = localStorage.getItem(DELTA_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    /* 过滤 > 7 天的旧记录 */
+    const now = Date.now();
+    const cleaned = {};
+    Object.entries(parsed).forEach(([target, entry]) => {
+      if (!entry || typeof entry.at !== 'string') return;
+      const age = now - new Date(entry.at).getTime();
+      if (age <= DELTA_MAX_AGE_MS) cleaned[target] = entry;
+    });
+    return cleaned;
+  } catch (e) { return {}; }
+}
+
+function persistFieldDeltas(badges) {
+  const existing = loadFieldDeltas();
+  const now = new Date().toISOString();
+  badges.forEach(b => {
+    if (b.diff === 0) return;
+    existing[b.target] = { diff: b.diff, at: now };
+  });
+  try { localStorage.setItem(DELTA_STORAGE_KEY, JSON.stringify(existing)); }
+  catch (e) { console.warn('persist delta failed:', e); }
+}
+
+function formatRelative(iso) {
+  const diffMin = (Date.now() - new Date(iso).getTime()) / 60000;
+  if (diffMin < 1)        return '刚刚';
+  if (diffMin < 60)       return `${Math.round(diffMin)} 分钟前`;
+  if (diffMin < 24 * 60)  return `${Math.round(diffMin / 60)} 小时前`;
+  return `${Math.round(diffMin / (60 * 24))} 天前`;
+}
+
+function applyPersistentDeltas() {
+  /* 每次 render 后调用：从 localStorage 读最近 delta 给对应元素加 .has-delta + data-delta */
+  const map = loadFieldDeltas();
+  document.querySelectorAll('.has-delta').forEach(el => {
+    el.classList.remove('has-delta');
+    el.removeAttribute('data-delta');
+  });
+  Object.entries(map).forEach(([target, { diff, at }]) => {
+    if (diff === 0) return;
+    const el = document.querySelector(target);
+    if (!el) return;
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.classList.add('has-delta');
+    const sign = diff > 0 ? '+' : '';
+    el.setAttribute('data-delta', `${sign}${diff} · ${formatRelative(at)}`);
+  });
+}
+
+/* ─── diff 计算（新数据 vs 旧数据）─── */
+function computeDeltas(oldD, newD) {
+  const badges = [];      // {target, diff, small}
+  const summary = [];     // "日报 +1", "十日报 +1" 等
+
+  /* === 报告大数 + breakdown 各类 === */
+  const dReportsTotal = (newD.reports?.daily_total || 0) - (oldD.reports?.daily_total || 0);
+  if (dReportsTotal !== 0) {
+    badges.push({ target: '[data-pillar="reports"]', diff: dReportsTotal });
+    summary.push(`日报 ${dReportsTotal > 0 ? '+' : ''}${dReportsTotal}`);
+  }
+  const reportCats = [
+    { key: 'daily_total',   cat: 'daily',   label: '日报行' },
+    { key: 'ten_day_total', cat: 'ten_day', label: '十日报' },
+    { key: 'monthly_total', cat: 'monthly', label: '月汇总' },
+  ];
+  reportCats.forEach(({ key, cat, label }) => {
+    const d = (newD.reports?.[key] || 0) - (oldD.reports?.[key] || 0);
+    if (d !== 0 && key !== 'daily_total') {  // daily_total 已经在大数字捕获，避免重复
+      badges.push({ target: `[data-rep-cat="${cat}"]`, diff: d, small: true });
+      summary.push(`${label} ${d > 0 ? '+' : ''}${d}`);
+    }
+  });
+  if ((newD.reports?.growth_exists) && !(oldD.reports?.growth_exists)) {
+    summary.push('人生成长 · 新建立');
+  }
+
+  /* === 素材库大数 + 5 分类 === */
+  const dM = (newD.material_library?.total || 0) - (oldD.material_library?.total || 0);
+  if (dM !== 0) {
+    badges.push({ target: '[data-pillar="material"]', diff: dM });
+    summary.push(`素材库 ${dM > 0 ? '+' : ''}${dM}`);
+  }
+  (newD.material_library?.categories || []).forEach(c => {
+    const old = (oldD.material_library?.categories || []).find(x => x.name === c.name);
+    if (!old) return;
+    const d = c.count - old.count;
+    if (d !== 0) {
+      badges.push({ target: `[data-mat-cat="${c.name}"]`, diff: d, small: true });
+      summary.push(`${c.name} ${d > 0 ? '+' : ''}${d}`);
+    }
+  });
+
+  /* === 知识图谱大数 + 3 域 + 跨域连接 === */
+  const dK = (newD.knowledge_graph?.concept_total || 0) - (oldD.knowledge_graph?.concept_total || 0);
+  if (dK !== 0) {
+    badges.push({ target: '[data-pillar="concepts"]', diff: dK });
+    summary.push(`概念 ${dK > 0 ? '+' : ''}${dK}`);
+  }
+  (newD.knowledge_graph?.categories || []).forEach(c => {
+    const old = (oldD.knowledge_graph?.categories || []).find(x => x.name === c.name);
+    if (!old) return;
+    const d = c.count - old.count;
+    if (d !== 0) {
+      badges.push({ target: `[data-kg-cat="${c.name}"]`, diff: d, small: true });
+      summary.push(`${c.name} ${d > 0 ? '+' : ''}${d}`);
+    }
+  });
+  const dCross = (newD.knowledge_graph?.cross_domain_links || 0) - (oldD.knowledge_graph?.cross_domain_links || 0);
+  if (dCross !== 0) {
+    badges.push({ target: `[data-kg-cat="跨域连接"]`, diff: dCross, small: true });
+    summary.push(`跨域连接 ${dCross > 0 ? '+' : ''}${dCross}`);
+  }
+
+  return { badges, summary };
+}
+
+/* ─── 主渲染 ─── */
+function render() {
+  const D = DATA;
+
+  document.getElementById('as-of').textContent = D.as_of;
+
+  const pillarCounts = [
+    [document.querySelector('.pillars .pillar:nth-child(1) .big'),  D.reports.daily_total],
+    [document.querySelector('.pillars .pillar:nth-child(2) .big'),  D.material_library.total],
+    [document.querySelector('.pillars .pillar:nth-child(3) .big'),  D.knowledge_graph.concept_total],
+    [document.querySelector('.disc-row .disc:nth-child(1) .big'),   D.patterns_stats.total],
+    [document.querySelector('.disc-row .disc:nth-child(2) .big'),   D.belief_stats.total],
+    [document.querySelector('.disc-row .disc:nth-child(3) .big'),   D.verified_mechanisms.length],
+  ];
+  pillarCounts.forEach(([el, n]) => {
+    if (!el) return;
+    el.dataset.count = n;
+    animateCountUp(el, n, 900 + Math.random()*200);
+  });
+
+  /* reports breakdown */
+  const rep = document.getElementById('rep-breakdown');
+  rep.innerHTML = `
+    <div class="row" data-rep-cat="daily"><span class="lbl">日 报</span><span class="val">${D.reports.daily_total}</span></div>
+    <div class="row" data-rep-cat="ten_day"><span class="lbl">十 日 报</span><span class="val">${D.reports.ten_day_total}</span></div>
+    <div class="row" data-rep-cat="monthly"><span class="lbl">月 汇 总</span><span class="val">${D.reports.monthly_total}</span></div>
+    <div class="row" data-rep-cat="growth"><span class="lbl">人 生 成 长</span><span class="check">${D.reports.growth_exists ? '已 建 立' : '未 建 立'}</span></div>`;
+
+  /* material breakdown */
+  const mat = document.getElementById('mat-breakdown');
+  mat.innerHTML = '';
+  D.material_library.categories.forEach(c => {
+    mat.insertAdjacentHTML('beforeend',
+      `<div class="row" data-mat-cat="${c.name}"><span class="lbl">${c.name}</span><span class="val">${c.count}</span></div>`);
+  });
+  document.getElementById('mat-subline').textContent = `${D.material_library.categories.length} 类 · 共 ${D.material_library.total}`;
+
+  /* knowledge graph breakdown */
+  const kg = document.getElementById('kg-breakdown');
+  kg.innerHTML = '';
+  D.knowledge_graph.categories.forEach(c => {
+    kg.insertAdjacentHTML('beforeend',
+      `<div class="row" data-kg-cat="${c.name}"><span class="lbl">${c.name}</span><span class="val">${c.count}</span></div>`);
+  });
+  kg.insertAdjacentHTML('beforeend',
+    `<div class="row" data-kg-cat="跨域连接"><span class="lbl">跨 域 连 接</span><span class="val">${D.knowledge_graph.cross_domain_links}</span></div>`);
+  document.getElementById('kg-subline').textContent = `${D.knowledge_graph.categories.length} 域 · 跨 域 连 接 ${D.knowledge_graph.cross_domain_links} 条`;
+
+  /* disc sublines */
+  const pstats = D.patterns_stats;
+  document.getElementById('pat-subline').textContent = `重写 ${pstats.rewriting} · 活跃 ${pstats.active} · 候选 ${pstats.candidate}`;
+  const bstats = D.belief_stats;
+  document.getElementById('bel-subline').textContent = `已确立 ${bstats.established} · 进行中 ${bstats.in_progress} · 待启动 ${bstats.pending}`;
+  const totalVerif = D.verified_mechanisms.reduce((a,m) => a + (m.verification_count||0), 0);
+  document.getElementById('mech-subline').textContent = `累积验证 ${totalVerif} 次 · 物理 / 认知 / 心理`;
+
+  /* chips */
+  const pat = document.getElementById('pat-mini');
+  pat.innerHTML = '';
+  D.patterns.slice(0,4).forEach(p => pat.insertAdjacentHTML('beforeend',
+    `<span class="chip">${p.professional_name}<span class="n">×${p.evidence_count}</span></span>`));
+
+  const bel = document.getElementById('bel-mini');
+  bel.innerHTML = '';
+  D.belief_migrations.slice(0,4).forEach(b => bel.insertAdjacentHTML('beforeend',
+    `<span class="chip">${b.domain}<span class="n">${b.status_label}</span></span>`));
+
+  const mech = document.getElementById('mech-mini');
+  mech.innerHTML = '';
+  D.verified_mechanisms.slice(0,4).forEach(m => mech.insertAdjacentHTML('beforeend',
+    `<span class="chip">${m.professional_name}<span class="n">×${m.verification_count}</span></span>`));
+
+  /* capacities */
+  const caps = document.getElementById('caps-list');
+  caps.innerHTML = '';
+  D.capabilities.forEach(c => {
+    const pct = Math.round(c.score / c.max * 100);
+    caps.insertAdjacentHTML('beforeend', `
+      <div class="cap">
+        <div class="nm">${c.name}</div>
+        <div class="sc">${c.score}<span class="m">/ ${c.max}</span></div>
+        <div class="meter${c.bottleneck ? ' bottleneck' : ''}"><span style="width:${pct}%"></span></div>
+        <div class="lbl${c.bottleneck ? ' bottleneck' : ''}">${c.state_label}</div>
+      </div>`);
+  });
+
+  /* rhythm bars */
+  const rg = document.getElementById('rhythm-grid');
+  rg.innerHTML = '';
+  const maxA = Math.max(...D.activity_density);
+  D.activity_density.forEach((v,i) => {
+    const h = Math.max(4, Math.round(v / maxA * 92));
+    const hi = (i === D.activity_density.length - 1) ? 1 : (v === maxA ? 1 : 0);
+    rg.insertAdjacentHTML('beforeend', `<div class="bar" style="height:${h}px" data-hi="${hi}"></div>`);
+  });
+  document.getElementById('rhythm-range').textContent = D.activity_range;
+
+  /* patterns index */
+  const pl = document.getElementById('patterns-list');
+  pl.innerHTML = '';
+  D.patterns.forEach((p,i) => {
+    const num = String(i+1).padStart(2,'0');
+    const trend = { down:'▼', up:'▲', flat:'—' }[p.trigger_trend] || '—';
+    pl.insertAdjacentHTML('beforeend', `
+      <div class="idx-row">
+        <span class="num">${num}</span>
+        <span class="name"><span class="tag" data-c="${p.category}"></span>${p.professional_name}</span>
+        <span class="meta">${p.status_label} · ${p.source_system}</span>
+        <span class="conf"><span class="trend" data-t="${p.trigger_trend}">${trend} ${(p.confidence*100).toFixed(0)}</span> · ×${p.evidence_count}</span>
+      </div>`);
+  });
+
+  /* beliefs timeline */
+  const bl = document.getElementById('beliefs-list');
+  bl.innerHTML = '';
+  D.belief_migrations.forEach(b => {
+    const hasLoose = !!b.loosening_date, hasEst = !!b.established_date;
+    let track = '';
+    if (!hasLoose && !hasEst) {
+      track = `<span class="mark" data-kind="pending" style="left:50%">待 启 动</span>`;
+    } else if (hasLoose && !hasEst) {
+      track = `<span class="mark" data-kind="loose" style="left:30%">松动 · ${b.loosening_date.slice(5).replace('-','.')}</span>
+               <span class="mark" data-kind="pending" style="left:80%">未 确 立</span>`;
+    } else {
+      track = `<span class="mark" data-kind="loose" style="left:20%">松动 · ${b.loosening_date.slice(5).replace('-','.')}</span>
+               <span class="mark" data-kind="established" style="left:80%">确立 · ${b.established_date.slice(5).replace('-','.')}</span>`;
+    }
+    bl.insertAdjacentHTML('beforeend', `
+      <div class="belief-row">
+        <div class="domain">${b.domain}</div>
+        <div class="track">${track}</div>
+        <div class="status">${b.status_label}</div>
+      </div>`);
+  });
+
+  /* mechanisms */
+  const ml = document.getElementById('mech-list');
+  ml.innerHTML = '';
+  D.verified_mechanisms.forEach(m => {
+    ml.insertAdjacentHTML('beforeend', `
+      <div class="mech">
+        <div class="nm">${m.professional_name}</div>
+        <div class="count">${m.verification_count}<span class="x">次验证</span></div>
+        <div class="src">${m.source_system}</div>
+      </div>`);
+  });
+
+  /* open topics */
+  const tl = document.getElementById('topics-list');
+  tl.innerHTML = '';
+  D.open_topics.forEach(t => {
+    tl.insertAdjacentHTML('beforeend', `
+      <div class="topic-card">
+        <div class="tc-head">
+          <span class="tc-domain">${t.source_domain}</span>
+          <span class="tc-flag">${t.flag || ''}</span>
+        </div>
+        <div class="tc-title">${t.topic_title}</div>
+        <div class="tc-note">${t.note}</div>
+      </div>`);
+  });
+
+  /* render 末尾：恢复 hover delta tooltip（breakdown row 每次 render 都被重建，必须这里重加）*/
+  applyPersistentDeltas();
+}
+
+/* ─── 金句轮播 ─── */
+let qIdx = 0, qTimer = null;
+function showQuote(i) {
+  const qt = document.getElementById('qtext');
+  const qd = document.getElementById('qmeta-date');
+  const qi = document.getElementById('qmeta-idx');
+  qIdx = (i + DATA.quote_pool.length) % DATA.quote_pool.length;
+  qt.style.opacity = 0;
+  setTimeout(() => {
+    qt.textContent = DATA.quote_pool[qIdx].text;
+    qd.textContent = DATA.quote_pool[qIdx].date;
+    qi.textContent = `${qIdx+1} / ${DATA.quote_pool.length}`;
+    qt.style.opacity = 1;
+  }, 280);
+}
+
+/* ─── 任务英文→中文标签（用于外层显示）─── */
+const TASK_LABELS = {
+  daily_analysis_report:    '日报',
+  daily_analysis_state:     '日状态',
+  weekly_material_five:     '素材库',
+  ten_day_summary:          '十日总结',
+  monthly_summary:          '月汇总',
+  next_month_astrology:     '下月星象',
+  monthly_knowledge_graph:  '月图谱',
+  life_growth_report:       '人生轨迹',
+};
+
+/* ─── 进度条 + 操作台 ─── */
+function renderProgress(p) {
+  const step = p.step || 0, total = p.total || 0;
+  document.getElementById('op-step').textContent = `${step} / ${total || '?'}`;
+  const pct = total > 0 ? Math.min(100, Math.round(step / total * 100)) : 0;
+  const bar = document.getElementById('op-bar');
+  const fill = document.getElementById('op-bar-fill');
+  fill.style.width = pct + '%';
+  const labelEl = document.getElementById('op-label');
+  labelEl.textContent = p.label || '—';
+  if (p.status === 'error') { bar.classList.add('err'); labelEl.classList.add('err'); }
+  else                      { bar.classList.remove('err'); labelEl.classList.remove('err'); }
+}
+
+function renderOuter(i, total, subLabel) {
+  const el = document.getElementById('op-outer');
+  if (total <= 1) { el.classList.add('single'); return; }
+  el.classList.remove('single');
+  el.textContent = `${i} / ${total} · ${subLabel}`;
+}
+
+function showProgress(show) {
+  document.getElementById('ops-progress').hidden = !show;
+}
+
+/* 本地日期格式 YYYY-MM-DD（不走 toISOString 避免 UTC 误差）*/
+function ymdLocal(d = new Date()) {
+  return d.getFullYear() + '-'
+    + String(d.getMonth() + 1).padStart(2, '0') + '-'
+    + String(d.getDate()).padStart(2, '0');
+}
+function getSelectedDate() {
+  return document.getElementById('op-date').value || ymdLocal();
+}
+
+async function runChainWithProgress(tasks, chainLabel) {
+  const allBtns = document.querySelectorAll('.ops-buttons .op-btn');
+  allBtns.forEach(b => b.disabled = true);
+  const date = getSelectedDate();
+  /* 记录跑任务前的数据快照（规模相关），用于跑完后 diff */
+  const dataSnapshot = JSON.parse(JSON.stringify({
+    reports: DATA.reports,
+    material_library: DATA.material_library,
+    knowledge_graph: DATA.knowledge_graph,
+  }));
+  setStatus(`${chainLabel} · ${date} · 启动…`);
+  showProgress(true);
+
+  const total = tasks.length;
+  for (let i = 0; i < total; i++) {
+    const subTask  = tasks[i];
+    const subLabel = TASK_LABELS[subTask] || subTask;
+    renderOuter(i + 1, total, subLabel);
+    renderProgress({ step: 0, total: 0, label: `${subLabel} · 启动中…`, status: 'running' });
+
+    /* 轮询 /api/agent/progress（后端 _update_progress 实时打点）*/
+    let polling = true;
+    (async () => {
+      while (polling) {
+        try {
+          const r = await fetch('/api/agent/progress', { cache: 'no-store' });
+          if (r.ok) {
+            const p = await r.json();
+            renderProgress(p);
+            if (p.status === 'done' || p.status === 'error') { polling = false; break; }
+          }
+        } catch (e) { /* 继续轮 */ }
+        await new Promise(res => setTimeout(res, 500));
+      }
+    })();
+
+    try {
+      const r = await fetch('/api/agent/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: subTask, profile: 'prod', date }),
+      });
+      polling = false;
+      if (!r.ok) {
+        /* 尝试从响应体读出后端的 error 消息（ValueError / FileNotFoundError 等都会回 JSON）*/
+        let detail = 'HTTP ' + r.status;
+        try {
+          const j = await r.json();
+          if (j && j.error) detail = j.error;
+        } catch (e) { /* body 不是 json，用 HTTP 码 */ }
+        throw new Error(detail);
+      }
+      await r.json();
+
+      /* 取最后一次 progress 状态 */
+      try {
+        const p = await (await fetch('/api/agent/progress', { cache: 'no-store' })).json();
+        renderProgress(p);
+      } catch (e) { /* ignore */ }
+    } catch (e) {
+      polling = false;
+      setStatus(`${chainLabel} · ${subLabel} 失败 · ${e.message}`, 'err');
+      allBtns.forEach(b => b.disabled = false);
+      return;
+    }
+  }
+
+  /* 全部成功 —— 后端 hook 已自动重生成 mirror-scale.json，前端 loadScale 取最新 */
+  await loadScale();
+
+  /* 先持久化 delta（render 之前）—— render 后 applyPersistentDeltas 会附加 hover tooltip */
+  const deltas = computeDeltas(dataSnapshot, DATA);
+  persistFieldDeltas(deltas.badges);
+
+  render();  // animateCountUp 从旧值跳新值 + 末尾 applyPersistentDeltas
+
+  /* 瞬时浮动 "+N" 徽章（任务完成即时反馈；持久 hover 已通过 localStorage 落盘）*/
+  setTimeout(() => {
+    deltas.badges.forEach(b => showDeltaBadge(b.target, b.diff, { small: b.small }));
+  }, 300);
+  const summaryText = deltas.summary.length ? ' · ' + deltas.summary.join(' · ') : ' · 数据未变';
+  setStatus(`${chainLabel} · ${date} · 完成（${total} 步）${summaryText}`, 'ok');
+  allBtns.forEach(b => b.disabled = false);
+}
+
+/* ─── init ─── */
+document.addEventListener('DOMContentLoaded', async () => {
+  render();
+  await loadScale();
+  render();
+
+  document.getElementById('qprev').addEventListener('click', () => showQuote(qIdx - 1));
+  document.getElementById('qnext').addEventListener('click', () => showQuote(qIdx + 1));
+  qTimer = setInterval(() => showQuote(qIdx + 1), 7000);
+  document.querySelector('.quote-block').addEventListener('mouseenter', () => clearInterval(qTimer));
+
+  document.querySelectorAll('.ops-buttons .op-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tasks = (btn.dataset.tasks || '').split(',').map(s => s.trim()).filter(Boolean);
+      const label = btn.dataset.label || 'Task';
+      if (!tasks.length) return;
+      return runChainWithProgress(tasks, label);
+    });
+  });
+
+  /* 日期选择器：默认今天；快捷按钮今日 / 昨日 */
+  const dateInput = document.getElementById('op-date');
+  dateInput.value = ymdLocal();
+  document.querySelectorAll('.ops-date .quick').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const d = new Date();
+      if (btn.dataset.quick === 'yesterday') d.setDate(d.getDate() - 1);
+      dateInput.value = ymdLocal(d);
+    });
+  });
+});
+</script>
+
+</body>
+</html>

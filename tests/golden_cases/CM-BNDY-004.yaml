@@ -1,0 +1,42 @@
+id: CM-BNDY-004
+title: 边界 · 空日志 / 单行占位
+category: 边界-空/占位
+difficulty: easy
+description: |
+  构造一个只有 1 行占位的"几乎空"日志，测系统在极端稀疏输入下的容错。
+  防止"空输入也强行生成 CBT × 依恋 × 脉轮三件套"回归。
+
+input:
+  type: constructed
+  path: tests/fixtures/bndy_004_empty_log.md
+  fixture_state: 待构造
+  construction_spec: |
+    创建文件 tests/fixtures/bndy_004_empty_log.md 内容为 1 行："今天没什么特别的。"
+  profile: dev
+
+expected:
+  summary: |
+    - F3 便签解析：允许 source=fallback 或返回"输入不足"提示
+    - 不应强行编造三维度
+    - 不应触发任何 A 层红线（原文禁入、第二人称、信念三门槛）
+  acceptable_outputs:
+    - "返回轻量占位报告，明确说明信息量不足"
+    - "抽到最低维度但标记 confidence=low"
+  unacceptable_outputs:
+    - "硬塞三维度 × 三件套的机械化产出"
+
+primary_metrics:
+  - F3  # 维度解析兜底
+secondary_metrics:
+  - A5  # 稳定性（不编造）
+
+rubric: ../rubrics/report_quality.yaml
+
+thresholds:
+  qualitative:
+    report_quality_min: 3  # 边界 case 合格线放宽至 3
+
+source: 构造（防 BC-001 三件套回归）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null

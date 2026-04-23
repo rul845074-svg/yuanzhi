@@ -1,0 +1,71 @@
+rubric_id: report_quality
+name: 报告整体质量
+corresponds_to: 宪法10 A5 + 可读性综合
+pass_threshold: 4  # ≥4 算通过
+scoring_method: 作者自审 1-5 分，可辅以 LLM 判官
+
+levels:
+  - score: 5
+    label: 优秀
+    positive_signals:
+      - 指出至少一条作者自己没看见的模式
+      - 三维度分析都贴当日日志，不机械化
+      - 跨天联动自然
+      - 心理分析不走 "CBT 三件套" 默认路径
+      - 物理比喻新鲜不套公式
+      - 玄学有身体信号锚点
+    negative_signals: []
+
+  - score: 4
+    label: 良好
+    positive_signals:
+      - 三维度分析都贴日志
+      - 模式指认准确
+      - 格式规范
+      - 结构完整，至多 1-2 处小瑕疵（如一处"强行覆盖"）
+    negative_signals:
+      - 维度选择合理但未避开近 7 天高频大类
+
+  - score: 3
+    label: 合格
+    positive_signals:
+      - 基本贴日志
+      - 能看能用
+      - 建议可用但不深入
+    negative_signals:
+      - 出现 ≥1 处"今天日志没触发但报告硬提"
+      - 部分章节机械化
+      - 模式标签正确但无新洞见
+
+  - score: 2
+    label: 较差
+    positive_signals: []
+    negative_signals:
+      - 与当日日志脱节
+      - 出现 CBT × 依恋 × 脉轮三件套
+      - 建议和昨天几乎一样
+      - 信念写入不过三门槛
+      - 维度复用未跨天对比
+
+  - score: 1
+    label: 不可用
+    positive_signals: []
+    negative_signals:
+      - 报告与日志完全无关
+      - 出现原话（A2 红线）
+      - 第二人称泛滥（A4 红线）
+      - 结构错乱
+      - 任何 A 层红线违反
+
+automation:
+  countable_checks:
+    - check: has_cbt_dependency_chakra_combo
+      max_penalty: -2  # 触发则分数扣 2
+    - check: has_second_person
+      force_score: 1   # 触发则强制 1 分
+    - check: has_original_text_leak
+      force_score: 1
+
+notes: |
+  这是综合性最强的 Rubric，适用于所有核心 case。
+  1-2 分场景触发"自动扣分"，3-5 分需要人工打分。

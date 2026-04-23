@@ -1,0 +1,46 @@
+id: CM-CORE-002
+title: 深度情绪日志 · 小组会议黑洞
+category: 核心-深度情绪
+difficulty: medium
+description: |
+  作者 4/18 一天的深度情绪日志（小组会议受挫 + 自我对话 + 身体信号），
+  测系统在"情绪高浓度"场景下的模式识别与信念判据。
+
+input:
+  type: real_log
+  path: "可实现/时间轴/日志/2026-04-18.md"
+  profile: prod
+
+expected:
+  summary: |
+    - beliefs.new 写入内容 100% 过三门槛（判断性 / 可证伪 / 有行为证据）
+    - 不出现"情绪描述被错写为信念"
+    - 模式识别准确指向"小组会议中的身份收缩"或等价核心结构
+    - 三维度分析都贴当日日志，不出现机械化段落
+  expected_patterns_hint:
+    - 小组情境下的权力感 / 身份感
+    - 身体信号与情绪的关联
+  reference_file: "可实现/关于自己/每日报告/2026_04_18_日志整理与分析.md"
+
+primary_metrics:
+  - A1  # 信念三门槛满足率
+  - A5  # 报告稳定性
+secondary_metrics:
+  - A6  # 概念去重
+
+rubric: ../rubrics/belief_threshold.yaml
+
+thresholds:
+  quantitative:
+    belief_threshold_pass_rate: 1.0
+  qualitative:
+    report_quality_min: 4
+    belief_threshold_min: 4
+
+source: B 阶段实战数据（4/18 新链路首跑）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+notes: |
+  4/18 是 B 阶段上线期间最深入的一天，是 CM-CORE-002 的高质量候选输入。
+  若未来 Rubric 升级，优先在此 case 上校准。

@@ -1,0 +1,55 @@
+id: CM-REGR-011
+title: 回归 · BC-006 上月月报读取
+category: 回归-上下文正确性
+difficulty: easy
+description: |
+  针对 BC-006：`_find_monthly_summary()` 语义是"当月月报"（永不存在），
+  靠 fallback 误打误撞命中上月。修复后改为显式读上月。
+  此 case mock 三种场景验证显式分支正确。
+
+input:
+  type: mock_scenarios
+  scenarios:
+    - id: mid_month
+      description: 月中运行，月报目录仅有上月
+      mock_state: |
+        月报目录：2026_03_月度汇总.md
+        当前日期：2026-04-15
+      expected_monthly_summary: 2026_03_月度汇总.md
+    - id: year_boundary
+      description: 1 月初运行，应读去年 12 月
+      mock_state: |
+        月报目录：2025_12_月度汇总.md
+        当前日期：2026-01-05
+      expected_monthly_summary: 2025_12_月度汇总.md
+    - id: current_month_draft_exists
+      description: 当月月报草稿已存在，不能误读
+      mock_state: |
+        月报目录：2026_03_月度汇总.md, 2026_04_月度汇总.md（草稿）
+        当前日期：2026-04-20
+      expected_monthly_summary: 2026_03_月度汇总.md  # 读上月，不是当月草稿
+  profile: dev
+
+expected:
+  summary: |
+    - 三种场景都正确读到"上月"月报
+    - prompt 注入标题为"上月月度汇总"（不是"最近的月度汇总"）
+    - 日志进度提示同步
+
+primary_metrics:
+  - F5  # 上下文正确性 / 同步幂等
+
+rubric: ../rubrics/report_quality.yaml
+
+thresholds:
+  quantitative:
+    correct_monthly_summary_all_scenarios: true
+
+source: BC-006（2026-04-20 修复）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null
+linked_badcase: BC-006
+notes: |
+  本 case 纯逻辑，不需要跑 LLM，用单元测试或参数化 mock 就能验。
+  runner 实现时可走 fast-path（跳过 LLM 调用）。

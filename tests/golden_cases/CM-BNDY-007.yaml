@@ -1,0 +1,38 @@
+id: CM-BNDY-007
+title: 边界 · 多天跳跃 / 中间缺 3+ 天
+category: 边界-多天跳跃
+difficulty: medium
+description: |
+  在 dimension_usage_index 里人工制造连续 3+ 天的缺口后，突然写一天日志，
+  测跨天去重窗口在"稀疏时间序列"下的行为。
+
+input:
+  type: synthetic_index
+  base_logs:
+    - "可实现/时间轴/日志/2026-04-20.md"  # 目标日（选一天当日或最近日）
+  index_state: |
+    在 dimension_usage_index.json 里人工构造：仅保留 2026-04-12/13 的 entry，
+    删除 14-19 的 entry（模拟作者中间 7 天没写日志）
+  profile: dev  # 不污染 prod index
+
+expected:
+  summary: |
+    - A3 跨天规则不把"距今 >7 天"的 entry 算入"高频大类"
+    - 不应因 index 稀疏而退化成 cold-start 三件套
+    - 应正常触发"补跑豁免"语义（若有）或"窗口内样本不足"提示
+
+primary_metrics:
+  - A3  # 跨天去重窗口逻辑
+secondary_metrics:
+  - A6
+
+rubric: ../rubrics/dimension_diversity.yaml
+
+thresholds:
+  qualitative:
+    dimension_diversity_min: 4
+
+source: 构造（边界：时间序列稀疏）
+drafted_at: 2026-04-20
+reviewed_at: null
+reviewer: null

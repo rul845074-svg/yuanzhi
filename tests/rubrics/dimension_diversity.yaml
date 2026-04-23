@@ -1,0 +1,61 @@
+rubric_id: dimension_diversity
+name: 维度多样性
+corresponds_to: 宪法10 A3a + A3b
+pass_threshold: 4
+scoring_method: 扫 7 天窗口内 dimension_usage_index.json + 人工读跨天对比段
+
+sub_metrics:
+  - name: A3a 触发率
+    description: 复用发生时，100% 写跨天对比段
+  - name: A3b 样本量
+    description: 近 7 天复用样本量 ≥ 3 次/月（保证分母非空）
+
+levels:
+  - score: 5
+    label: 完美
+    criteria:
+      - 7 天窗口内三维度各自 0 重复
+      - 若有重复，100% 写了跨天对比
+      - 跨天对比段有具体"上次 vs 本次"的内容对照
+
+  - score: 4
+    label: 基本合格
+    criteria:
+      - 7 天内 1 维度出现 1 次重复
+      - 写了跨天对比
+      - 对比质量中等
+
+  - score: 3
+    label: 勉强（容差）
+    criteria:
+      - 7 天内有 1 次重复未写跨天对比
+      - 但未形成连续重复
+
+  - score: 2
+    label: 较差
+    criteria:
+      - 出现 CBT × 依恋 × 脉轮三件套回归（A 阶段前病症）
+      - 或 2+ 次同维度连续重复
+
+  - score: 1
+    label: 不可用
+    criteria:
+      - 7 天内三维度全部重复
+      - 退回到"换车型不换赛道"
+
+automation:
+  countable_checks:
+    - check: dimension_repeat_count_7days
+      per_dimension_max_for_score_5: 0
+      per_dimension_max_for_score_4: 1
+    - check: cross_day_compare_written_when_repeat
+      required_rate_for_score_5: 1.0
+      required_rate_for_score_4: 1.0
+    - check: historical_high_freq_avoided
+      targets: ["CBT", "依恋", "脉轮", "信息论"]
+      required_avoided_count_for_score_5: 3  # 至少绕开 3 个
+
+notes: |
+  实战 B 阶段 6 天 0 重复 ⇒ A3a 无样本可测。
+  CM-REGR-009 是唯一能主动测 A3 的 case：连续 5 天强触发脉轮，看规则是否生效。
+  Rubric 本身就鼓励"主动制造复用"以测规则有效性。

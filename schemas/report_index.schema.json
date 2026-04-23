@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReportIndex",
+  "type": "object",
+  "required": [
+    "generated_at",
+    "items"
+  ],
+  "properties": {
+    "generated_at": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "date",
+          "title",
+          "summary",
+          "source_path",
+          "tags"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "date": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "source_path": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

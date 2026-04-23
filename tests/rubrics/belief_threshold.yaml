@@ -1,0 +1,58 @@
+rubric_id: belief_threshold
+name: 信念三门槛满足度
+corresponds_to: 宪法10 A1
+pass_threshold: 4
+scoring_method: 对照 beliefs.new 条目逐条判，自动 + 人工混合
+
+three_thresholds:
+  - name: 判断性
+    description: 信念是"某种判断式陈述"（"我必须 X"）而非"某种情绪描述"（"我很焦虑"）
+  - name: 可证伪
+    description: 能在行为中被观察到违反或确认，不是纯主观感受
+  - name: 有行为证据
+    description: 当日日志里有具体行为 / 对话 / 决策支撑这条信念
+
+levels:
+  - score: 5
+    label: 完美
+    criteria:
+      - beliefs.new 全部条目三门槛均满足
+      - status 字段正确标注 candidate / confirmed
+      - 不出现重复标 candidate（BC-002 回归）
+
+  - score: 4
+    label: 基本合格
+    criteria:
+      - 三门槛满足
+      - status 有漏标（<20%）
+
+  - score: 3
+    label: 勉强
+    criteria:
+      - 有 1 条写入 beliefs.new 但仅满足 2/3 门槛
+      - 其它条目正确
+
+  - score: 2
+    label: 较差
+    criteria:
+      - 有 1 条明显"情绪描述"被错写为信念
+      - 或有 1 条没有行为证据的"应然陈述"
+
+  - score: 1
+    label: 不可用
+    criteria:
+      - ≥2 条假信念
+      - 同一条信念被反复标 candidate（BC-002 回归）
+
+automation:
+  countable_checks:
+    - check: duplicate_candidate_same_belief
+      trigger: 同一 belief_id 连续两次标 candidate
+      force_score: 1
+    - check: emotion_mislabeled_as_belief
+      trigger: beliefs.new 内容以"我感到/我觉得"开头
+      max_penalty: -2
+
+notes: |
+  A1 是认知镜 AI 层红线之一。信念判据错 = 产品核心失效。
+  建议每次跑 case 都强制过此 Rubric。
