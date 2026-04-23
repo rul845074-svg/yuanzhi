@@ -205,5 +205,11 @@ launchctl list | grep yuanzhi   # 验证
 
 ## License
 
-个人工具源码。暂无 license 声明 —— fork / 学习 / 改造都可，商用请联系作者。
+**[MIT License](LICENSE)** · Copyright (c) 2026 rul845074-svg (汝霖 · yuanzhi author)
+
+你可以自由地 fork、修改、商用、再发布 —— 条件只有一个：**任何衍生作品必须保留 `Copyright (c) 2026 rul845074-svg (汝霖 · yuanzhi author)` 这行署名**以及 LICENSE 文件全文。
+
+换句话说：拿走可以，改掉可以，删作者署名不可以。
+
+> 非源码部分（prompts 里的方法论、"观测手札"产品概念、"元知 / YUAN · ZHI" 品牌名）使用上请保持相同的署名原则。如用于商业产品或学术引用，建议额外通过 GitHub issue 告知，方便未来沉淀为"用过此系统的衍生项目"索引。
 
